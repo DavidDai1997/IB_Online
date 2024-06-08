@@ -213,10 +213,8 @@ function keyPressed() {
 }
 
 function handleMouseOrTouch() {
-    if (trialPhase === -1) {
+    if (trialPhase === -1 || trialPhase === 3) {
         keyPressOccurred = true;
-    } else if (trialPhase === 8) {
-        keyPressOccurred = true; // This will handle the response stage for touch as well
     }
 }
 
