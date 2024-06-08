@@ -49,6 +49,10 @@ function setup() {
     } else {
         console.error('Participant ID field not found');
     }
+
+    // Add event listeners for touch and mouse events
+    canvas.mousePressed(handleMouseOrTouch);
+    canvas.touchStarted(handleMouseOrTouch);
 }
 
 function draw() {
@@ -58,7 +62,7 @@ function draw() {
     if (!soundLoadedFlag) {
         text('Loading sound...', width / 2, height / 2);
     } else if (trialPhase === -1) {
-        text('Welcome! Press the spacebar to start.', width / 2, height / 2);
+        text('Welcome! Press the spacebar or tap the screen to start.', width / 2, height / 2);
         if (keyPressOccurred) {
             userStartAudio(); // Resume the AudioContext
             keyPressOccurred = false; // Reset key press flag
@@ -92,7 +96,7 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 3) {
-        // Phase 3: Wait for participant keypress (spacebar)
+        // Phase 3: Wait for participant keypress (spacebar) or tap
         drawClockface();
         drawRedDot();
         if (keyPressOccurred) {
@@ -101,11 +105,11 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 4) {
-        // Phase 4: Red dot keeps rotating for 60 frames after keypress
+        // Phase 4: Red dot keeps rotating for 60 frames after keypress or tap
         drawClockface();
         drawRedDot();
         if (frameCount === playSoundFrame) {
-            soundFile.play(); // Play the sound 15 frames after keypress
+            soundFile.play(); // Play the sound 15 frames after keypress or tap
         }
         if (frameCount < rotationContinuedFrames) {
             frameCount++;
@@ -126,7 +130,7 @@ function draw() {
     } else if (trialPhase === 8) {
         // Phase 8: Response stage
         drawClockfaceWithHover();
-        if (mouseIsPressed) {
+        if (mouseIsPressed || touches.length > 0) {
             if (selectedDotIndex !== -1) {
                 // Log and submit response
                 const responseTime = millis();
@@ -205,6 +209,14 @@ function drawRedDot() {
 function keyPressed() {
     if (key === ' ') {
         keyPressOccurred = true;
+    }
+}
+
+function handleMouseOrTouch() {
+    if (trialPhase === -1) {
+        keyPressOccurred = true;
+    } else if (trialPhase === 8) {
+        keyPressOccurred = true; // This will handle the response stage for touch as well
     }
 }
 
