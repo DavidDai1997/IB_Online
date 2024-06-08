@@ -11,6 +11,7 @@ let soundFile;
 let soundLoadedFlag = false;
 let playSoundFrame = -1;
 let selectedDotIndex = -1;
+let participantID = generateUniqueID(); // Generate a unique ID for each participant
 
 function preload() {
     console.log('Preloading sound...');
@@ -40,6 +41,9 @@ function setup() {
 
     // Start with the red dot at a random position
     redDotPositionIndex = int(random(numDots));
+
+    // Set the participant ID in the hidden form field
+    document.getElementById('participantID').value = participantID;
 }
 
 function draw() {
@@ -49,7 +53,7 @@ function draw() {
     if (!soundLoadedFlag) {
         text('Loading sound...', width / 2, height / 2);
     } else if (trialPhase === -1) {
-        text('Welcome! Press the spacebar to start.(form test)', width / 2, height / 2);
+        text('Welcome! Press the spacebar to start.', width / 2, height / 2);
         if (keyPressOccurred) {
             userStartAudio(); // Resume the AudioContext
             keyPressOccurred = false; // Reset key press flag
@@ -127,8 +131,6 @@ function draw() {
                 };
                 document.getElementById('selectedDotIndex').value = responseData.selectedDotIndex;
                 document.getElementById('responseTime').value = responseData.responseTime;
-                document.getElementById('trialPhase').value = trialPhase;
-                document.getElementById('mousePressed').value = mousePressed;
                 document.getElementById('responseForm').submit();
                 trialPhase++;
             }
@@ -199,4 +201,11 @@ function soundLoaded() {
 
 function loadError(err) {
     console.error('Error loading sound:', err);
+}
+
+function generateUniqueID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 }
