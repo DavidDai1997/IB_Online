@@ -20,7 +20,7 @@ function preload() {
 
 function setup() {
     let canvas = createCanvas(1920, 1080);
-    canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);
+    centerCanvas(canvas);
     textAlign(CENTER, CENTER);
     textSize(32);
     getAudioContext().suspend(); // Suspend the AudioContext initially
@@ -232,4 +232,12 @@ function generateUniqueID() {
         let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
+}
+
+function centerCanvas(canvas) {
+    canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);
+}
+
+function windowResized() {
+    centerCanvas(canvas);
 }
