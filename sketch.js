@@ -18,8 +18,8 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(1920, 1080);
-    background(0);
+    let canvas = createCanvas(1920, 1080);
+    canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);
     textAlign(CENTER, CENTER);
     textSize(32);
     getAudioContext().suspend(); // Suspend the AudioContext initially
@@ -119,6 +119,17 @@ function draw() {
         drawClockfaceWithHover();
         if (mouseIsPressed) {
             if (selectedDotIndex !== -1) {
+                // Log and submit response
+                const responseTime = millis();
+                const responseData = {
+                    selectedDotIndex: selectedDotIndex,
+                    responseTime: responseTime
+                };
+                document.getElementById('selectedDotIndex').value = responseData.selectedDotIndex;
+                document.getElementById('responseTime').value = responseData.responseTime;
+                document.getElementById('trialPhase').value = trialPhase;
+                document.getElementById('mousePressed').value = mousePressed;
+                document.getElementById('responseForm').submit();
                 trialPhase++;
             }
         }
