@@ -43,7 +43,12 @@ function setup() {
     redDotPositionIndex = int(random(numDots));
 
     // Set the participant ID in the hidden form field
-    document.getElementById('participantID').value = participantID;
+    let participantIDField = document.getElementById('participantID');
+    if (participantIDField) {
+        participantIDField.value = participantID;
+    } else {
+        console.error('Participant ID field not found');
+    }
 }
 
 function draw() {
@@ -129,9 +134,18 @@ function draw() {
                     selectedDotIndex: selectedDotIndex,
                     responseTime: responseTime
                 };
-                document.getElementById('selectedDotIndex').value = responseData.selectedDotIndex;
-                document.getElementById('responseTime').value = responseData.responseTime;
-                document.getElementById('responseForm').submit();
+
+                let selectedDotIndexField = document.getElementById('selectedDotIndex');
+                let responseTimeField = document.getElementById('responseTime');
+
+                if (selectedDotIndexField && responseTimeField) {
+                    selectedDotIndexField.value = responseData.selectedDotIndex;
+                    responseTimeField.value = responseData.responseTime;
+                    document.getElementById('responseForm').submit();
+                } else {
+                    console.error('Form fields not found');
+                }
+
                 trialPhase++;
             }
         }
