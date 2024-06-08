@@ -20,7 +20,7 @@ function preload() {
 
 function setup() {
     let canvas = createCanvas(1920, 1080);
-    centerCanvas(canvas);
+    centerCanvas();
     textAlign(CENTER, CENTER);
     textSize(32);
     getAudioContext().suspend(); // Suspend the AudioContext initially
@@ -49,10 +49,6 @@ function setup() {
     } else {
         console.error('Participant ID field not found');
     }
-
-    // Add event listeners for touch and mouse events
-    canvas.mousePressed(handleMouseOrTouch);
-    canvas.touchStarted(handleMouseOrTouch);
 }
 
 function draw() {
@@ -62,7 +58,7 @@ function draw() {
     if (!soundLoadedFlag) {
         text('Loading sound...', width / 2, height / 2);
     } else if (trialPhase === -1) {
-        text('Welcome! Press the spacebar or tap the screen to start.', width / 2, height / 2);
+        text('Welcome! Press the spacebar to start.', width / 2, height / 2);
         if (keyPressOccurred) {
             userStartAudio(); // Resume the AudioContext
             keyPressOccurred = false; // Reset key press flag
@@ -96,7 +92,7 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 3) {
-        // Phase 3: Wait for participant keypress (spacebar) or tap
+        // Phase 3: Wait for participant keypress (spacebar)
         drawClockface();
         drawRedDot();
         if (keyPressOccurred) {
@@ -105,11 +101,11 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 4) {
-        // Phase 4: Red dot keeps rotating for 60 frames after keypress or tap
+        // Phase 4: Red dot keeps rotating for 60 frames after keypress
         drawClockface();
         drawRedDot();
         if (frameCount === playSoundFrame) {
-            soundFile.play(); // Play the sound 15 frames after keypress or tap
+            soundFile.play(); // Play the sound 15 frames after keypress
         }
         if (frameCount < rotationContinuedFrames) {
             frameCount++;
@@ -130,7 +126,7 @@ function draw() {
     } else if (trialPhase === 8) {
         // Phase 8: Response stage
         drawClockfaceWithHover();
-        if (mouseIsPressed || touches.length > 0) {
+        if (mouseIsPressed) {
             if (selectedDotIndex !== -1) {
                 // Log and submit response
                 const responseTime = millis();
@@ -212,12 +208,6 @@ function keyPressed() {
     }
 }
 
-function handleMouseOrTouch() {
-    if (trialPhase === -1 || trialPhase === 3) {
-        keyPressOccurred = true;
-    }
-}
-
 function soundLoaded() {
     console.log('Sound loaded successfully.');
     soundLoadedFlag = true;
@@ -234,10 +224,17 @@ function generateUniqueID() {
     });
 }
 
-function centerCanvas(canvas) {
-    canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);
+function centerCanvas() {
+    let canvas = select('canvas');
+    canvas.style('display', 'block');
+    canvas.style('margin-left', 'auto');
+    canvas.style('margin-right', 'auto');
+    canvas.style('position', 'absolute');
+    canvas.style('top', '50%');
+    canvas.style('left', '50%');
+    canvas.style('transform', 'translate(-50%, -50%)');
 }
 
 function windowResized() {
-    centerCanvas(canvas);
+    centerCanvas();
 }
