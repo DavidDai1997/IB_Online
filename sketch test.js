@@ -17,7 +17,7 @@ let dotDistance, timeEstimationError;
 let experimentStarted = false; // To track if the experiment has started
 let computerActionFrame = -1; // Frame at which the computer triggers the sound in Passive condition
 let conditionsOrder = []; // Order of conditions for the participant
-let canvas;
+let canvasCreated = false; // Track if the canvas is created
 
 function preload() {
     console.log('Preloading sounds...');
@@ -48,7 +48,8 @@ function startExperiment() {
 }
 
 function setup() {
-    noCanvas(); // Do not create a canvas initially
+    // Do not create a canvas initially
+    noCanvas();
     textAlign(CENTER, CENTER);
     textSize(32);
 }
@@ -66,9 +67,11 @@ function draw() {
             keyPressOccurred = false; // Reset key press flag
             document.getElementById('messageContainer').style.display = 'none';
 
-            if (!canvas) {
-                canvas = createCanvas(1920, 1080);
+            // Create canvas when trials start
+            if (!canvasCreated) {
+                let canvas = createCanvas(1920, 1080);
                 centerCanvas();
+                canvasCreated = true;
 
                 // Initialize the center and radius for the gray dots
                 centerX = width / 2;
@@ -217,8 +220,8 @@ function draw() {
             condition = conditionsOrder[trialNumber];
             document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
             document.getElementById('messageContainer').style.display = 'block';
-            removeCanvas(); // Remove the canvas when displaying the condition message
-            canvas = null; // Reset the canvas variable
+            noCanvas(); // Remove the canvas when displaying the condition message
+            canvasCreated = false; // Reset the canvas creation flag
             trialPhase = -2; // Indicate that we are showing the next condition message
         } else {
             // Show demo over message
