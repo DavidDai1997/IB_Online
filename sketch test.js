@@ -12,42 +12,57 @@ let soundLoadedFlag = false;
 let playSoundFrame = -1;
 let selectedDotIndex = -1;
 let participantID = generateUniqueID(); // Generate a unique ID for each participant
+let subjectNumber, age, condition = "Agency", trialNumber = 0, realDotIndex, timeBeforeAction;
+let dotDistance, timeEstimationError;
 
 function preload() {
     console.log('Preloading sound...');
     soundFile = loadSound('Pool2_44100.wav', soundLoaded, loadError);
 }
 
-function setup() {
-    let canvas = createCanvas(1920, 1080);
-    centerCanvas();
-    textAlign(CENTER, CENTER);
-    textSize(32);
-    getAudioContext().suspend(); // Suspend the AudioContext initially
+function startExperiment() {
+    subjectNumber = document.getElementById('subjectNumber').value;
+    age = document.getElementById('age').value;
 
-    // Initialize the center and radius for the gray dots
-    centerX = width / 2;
-    centerY = height / 2;
-    radius = min(width, height) / 3;
-    angleStep = TWO_PI / numDots;
+    if (subjectNumber && age) {
+        document.getElementById('subjectNumberField').value = subjectNumber;
+        document.getElementById('ageField').value = age;
+        document.getElementById('inputContainer').style.display = 'none';
 
-    // Calculate positions of the gray dots
-    for (let i = 0; i < numDots; i++) {
-        let angle = i * angleStep;
-        let x = centerX + cos(angle) * radius;
-        let y = centerY + sin(angle) * radius;
-        grayDots.push(createVector(x, y));
-    }
+        let canvas = createCanvas(1920, 1080);
+        centerCanvas();
+        textAlign(CENTER, CENTER);
+        textSize(32);
+        getAudioContext().suspend(); // Suspend the AudioContext initially
 
-    // Start with the red dot at a random position
-    redDotPositionIndex = int(random(numDots));
+        // Initialize the center and radius for the gray dots
+        centerX = width / 2;
+        centerY = height / 2;
+        radius = min(width, height) / 3;
+        angleStep = TWO_PI / numDots;
 
-    // Set the participant ID in the hidden form field
-    let participantIDField = document.getElementById('participantID');
-    if (participantIDField) {
-        participantIDField.value = participantID;
+        // Calculate positions of the gray dots
+        for (let i = 0; i < numDots; i++) {
+            let angle = i * angleStep;
+            let x = centerX + cos(angle) * radius;
+            let y = centerY + sin(angle) * radius;
+            grayDots.push(createVector(x, y));
+        }
+
+        // Start with the red dot at a random position
+        redDotPositionIndex = int(random(numDots));
+
+        // Set the participant ID in the hidden form field
+        let participantIDField = document.getElementById('participantID');
+        if (participantIDField) {
+            participantIDField.value = participantID;
+        } else {
+            console.error('Participant ID field not found');
+        }
+
+        trialPhase = -1; // Start the experiment
     } else {
-        console.error('Participant ID field not found');
+        alert("Please enter both Subject Number and Age.");
     }
 }
 
@@ -58,7 +73,7 @@ function draw() {
     if (!soundLoadedFlag) {
         text('Loading sound...', width / 2, height / 2);
     } else if (trialPhase === -1) {
-        text('Welcome! Press the spacebar to start. new', width / 2, height / 2);
+        text('Welcome! Press the spacebar to start.', width / 2, height / 2);
         if (keyPressOccurred) {
             userStartAudio(); // Resume the AudioContext
             keyPressOccurred = false; // Reset key press flag
@@ -88,6 +103,7 @@ function draw() {
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         frameCount++;
         if (keyPressOccurred) {
+            timeBeforeAction = frameCount;
             frameCount = 0;
             trialPhase++;
         }
@@ -106,6 +122,7 @@ function draw() {
         drawRedDot();
         if (frameCount === playSoundFrame) {
             soundFile.play(); // Play the sound 15 frames after keypress
+            realDotIndex = redDotPositionIndex;
         }
         if (frameCount < rotationContinuedFrames) {
             frameCount++;
@@ -129,18 +146,25 @@ function draw() {
         if (mouseIsPressed) {
             if (selectedDotIndex !== -1) {
                 // Log and submit response
-                const responseTime = millis();
-                const responseData = {
-                    selectedDotIndex: selectedDotIndex,
-                    responseTime: responseTime
-                };
+                dotDistance = calculateDotDistance(realDotIndex, selectedDotIndex);
+                timeEstimationError = dotDistance * 16.666;
 
                 let selectedDotIndexField = document.getElementById('selectedDotIndex');
-                let responseTimeField = document.getElementById('responseTime');
+                let conditionField = document.getElementById('condition');
+                let timeBeforeActionField = document.getElementById('timeBeforeAction');
+                let trialNumberField = document.getElementById('trialNumber');
+                let realDotIndexField = document.getElementById('realDotIndex');
+                let dotDistanceField = document.getElementById('dotDistance');
+                let timeEstimationErrorField = document.getElementById('timeEstimationError');
 
-                if (selectedDotIndexField && responseTimeField) {
-                    selectedDotIndexField.value = responseData.selectedDotIndex;
-                    responseTimeField.value = responseData.responseTime;
+                if (selectedDotIndexField && conditionField && timeBeforeActionField && trialNumberField && realDotIndexField && dotDistanceField && timeEstimationErrorField) {
+                    selectedDotIndexField.value = selectedDotIndex;
+                    conditionField.value = condition;
+                    timeBeforeActionField.value = timeBeforeAction;
+                    trialNumberField.value = trialNumber;
+                    realDotIndexField.value = realDotIndex;
+                    dotDistanceField.value = dotDistance;
+                    timeEstimationErrorField.value = timeEstimationError;
 
                     // Submit form
                     document.getElementById('responseForm').submit();
@@ -239,4 +263,14 @@ function centerCanvas() {
 
 function windowResized() {
     centerCanvas();
+}
+
+function calculateDotDistance(realDotIndex, selectedDotIndex) {
+    let distance = selectedDotIndex - realDotIndex;
+    if (distance > 60) {
+        distance -= 120;
+    } else if (distance < -60) {
+        distance += 120;
+    }
+    return distance;
 }
