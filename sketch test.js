@@ -238,7 +238,7 @@ function drawClockfaceWithHover() {
     noStroke();
     selectedDotIndex = -1; // Reset selected dot index
 
-    for (let i = 0; i < grayDots.length; i++) {
+    for (let i = 0; < grayDots.length; i++) {
         let dot = grayDots[i];
         let d = dist(mouseX, mouseY, dot.x, dot.y);
         if (d < 8) {
