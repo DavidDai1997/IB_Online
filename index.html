@@ -29,6 +29,15 @@
             padding: 10px;
             font-size: 16px;
         }
+        .message-container {
+            display: none;
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 32px;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
@@ -42,6 +51,7 @@
         <input type="number" id="age" required>
         <button onclick="startExperiment()">Start Experiment</button>
     </div>
+    <div class="message-container" id="messageContainer">This is a condition message.</div>
     <form id="responseForm" action="https://docs.google.com/forms/d/e/1FAIpQLSds_d_hmvV0Yspch426PHSzEyBDshzZHMslFPdJ4OK-3gaJGg/formResponse" method="POST" target="hidden_iframe" onsubmit="submitted=true;">
         <input type="hidden" name="entry.892808440" id="participantID">
         <input type="hidden" name="entry.1649456539" id="subjectNumberField">

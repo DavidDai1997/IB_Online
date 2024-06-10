@@ -69,6 +69,8 @@ function startExperiment() {
 
         experimentStarted = true; // Indicate the experiment has started
         condition = conditionsOrder[0];
+        document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
+        document.getElementById('messageContainer').style.display = 'block';
         trialPhase = -1; // Start the experiment
     } else {
         alert("Please enter both Subject Number and Age.");
@@ -82,11 +84,11 @@ function draw() {
     if (!soundLoadedFlag) {
         text('Loading sounds...', width / 2, height / 2);
     } else if (trialPhase === -1) {
-        textSize(32);
-        text(`This is ${condition} condition, press the space key to start`, width / 2, height / 2);
+        // Message already displayed in HTML
         if (keyPressOccurred && experimentStarted) {
             userStartAudio(); // Resume the AudioContext
             keyPressOccurred = false; // Reset key press flag
+            document.getElementById('messageContainer').style.display = 'none';
             trialPhase = 0; // Move to the next phase
         }
     } else if (trialPhase === 0 || trialPhase === 7) {
@@ -199,6 +201,8 @@ function draw() {
         trialNumber++;
         if (trialNumber < 2) {
             condition = conditionsOrder[trialNumber];
+            document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
+            document.getElementById('messageContainer').style.display = 'block';
             trialPhase = -1;
         } else {
             // Show demo over message
