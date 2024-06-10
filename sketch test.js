@@ -12,7 +12,6 @@ let soundLoadedFlag = false;
 let playSoundFrame = -1;
 let selectedDotIndex = -1;
 let participantID = generateUniqueID(); // Generate a unique ID for each participant
-let responseCounter = 0; // Counter to track the number of responses
 
 function preload() {
     console.log('Preloading sound...');
@@ -149,18 +148,9 @@ function draw() {
                     console.error('Form fields not found');
                 }
 
-                responseCounter++;
-                if (responseCounter >= 120) {
-                    trialPhase = 9; // End the test after 120 responses
-                }
+                trialPhase = 9; // End the demo trial after response
             }
         }
-        // Display the selected dot index for verification
-        textSize(32);
-        fill(255);
-        textAlign(CENTER, CENTER);
-        text(`Selected Dot Index: ${selectedDotIndex}`, width / 2, height - 50);
-        text(`Responses: ${responseCounter}/120`, width / 2, height - 100);
     } else if (trialPhase === 9) {
         // Phase 9: Show "demo over"
         background(0);
