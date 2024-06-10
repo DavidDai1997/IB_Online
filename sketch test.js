@@ -59,7 +59,7 @@ function draw() {
     if (!soundLoadedFlag) {
         text('Loading sound...', width / 2, height / 2);
     } else if (trialPhase === -1) {
-        text('Welcome! Press the spacebar to start. test', width / 2, height / 2);
+        text('Welcome! Press the spacebar to start.', width / 2, height / 2);
         if (keyPressOccurred) {
             userStartAudio(); // Resume the AudioContext
             keyPressOccurred = false; // Reset key press flag
@@ -142,7 +142,9 @@ function draw() {
                 if (selectedDotIndexField && responseTimeField) {
                     selectedDotIndexField.value = responseData.selectedDotIndex;
                     responseTimeField.value = responseData.responseTime;
-                    document.getElementById('responseForm').submit();
+
+                    // Submit form via AJAX
+                    document.getElementById('responseForm').dispatchEvent(new Event('submit'));
                 } else {
                     console.error('Form fields not found');
                 }
