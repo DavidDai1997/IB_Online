@@ -14,6 +14,7 @@ let selectedDotIndex = -1;
 let participantID = generateUniqueID(); // Generate a unique ID for each participant
 let subjectNumber, age, condition = "Agency", trialNumber = 0, realDotIndex, timeBeforeAction;
 let dotDistance, timeEstimationError;
+let experimentStarted = false; // To track if the experiment has started
 
 function preload() {
     console.log('Preloading sound...');
@@ -60,6 +61,7 @@ function startExperiment() {
             console.error('Participant ID field not found');
         }
 
+        experimentStarted = true; // Indicate the experiment has started
         trialPhase = -1; // Start the experiment
     } else {
         alert("Please enter both Subject Number and Age.");
@@ -74,7 +76,7 @@ function draw() {
         text('Loading sound...', width / 2, height / 2);
     } else if (trialPhase === -1) {
         text('Welcome! Press the spacebar to start.', width / 2, height / 2);
-        if (keyPressOccurred) {
+        if (keyPressOccurred && experimentStarted) {
             userStartAudio(); // Resume the AudioContext
             keyPressOccurred = false; // Reset key press flag
             trialPhase = 0; // Move to the next phase
@@ -229,7 +231,7 @@ function drawRedDot() {
 }
 
 function keyPressed() {
-    if (key === ' ') {
+    if (key === ' ' && experimentStarted) {
         keyPressOccurred = true;
     }
 }
