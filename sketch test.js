@@ -25,26 +25,28 @@ function preload() {
     keypressSoundFile = loadSound('keypress_44100.wav', soundLoaded, loadError);
 }
 
-function startExperiment() {
-    subjectNumber = document.getElementById('subjectNumber').value;
-    age = document.getElementById('age').value;
+function setup() {
+    let canvas = createCanvas(1920, 1080);
+    canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);
+    textAlign(CENTER, CENTER);
+    textSize(32);
 
-    if (subjectNumber && age) {
-        document.getElementById('subjectNumberField').value = subjectNumber;
-        document.getElementById('ageField').value = age;
-        document.getElementById('inputContainer').style.display = 'none';
+    // Initialize the center and radius for the gray dots
+    centerX = width / 2;
+    centerY = height / 2;
+    radius = min(width, height) / 3;
+    angleStep = TWO_PI / numDots;
 
-        // Determine the condition order based on subject number
-        conditionsOrder = subjectNumber % 2 === 0 ? ["Passive", "Agency"] : ["Agency", "Passive"];
-
-        experimentStarted = true; // Indicate the experiment has started
-        condition = conditionsOrder[0];
-        document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
-        document.getElementById('messageContainer').style.display = 'block';
-        trialPhase = -2; // Indicate that we are showing the initial condition message
-    } else {
-        alert("Please enter both Subject Number and Age.");
+    // Calculate positions of the gray dots
+    for (let i = 0; i < numDots; i++) {
+        let angle = i * angleStep;
+        let x = centerX + cos(angle) * radius;
+        let y = centerY + sin(angle) * radius;
+        grayDots.push(createVector(x, y));
     }
+
+    // Start with the red dot at a random position
+    redDotPositionIndex = int(random(numDots));
 }
 
 function draw() {
@@ -53,50 +55,12 @@ function draw() {
 
     if (!soundLoadedFlag) {
         text('Loading sounds...', width / 2, height / 2);
-    } else if (trialPhase === -2) {
-        // Display condition message and wait for key press to start
-        if (keyPressOccurred && experimentStarted) {
+    } else if (trialPhase === -1) {
+        text('Welcome! Press the spacebar to start.', width / 2, height / 2);
+        if (keyPressOccurred) {
             userStartAudio(); // Resume the AudioContext
             keyPressOccurred = false; // Reset key press flag
-            document.getElementById('messageContainer').style.display = 'none';
-
-            if (!canvasCreated) {
-                let canvas = createCanvas(1920, 1080);
-                centerCanvas();
-                textAlign(CENTER, CENTER);
-                textSize(32);
-                canvasCreated = true;
-
-                // Initialize the center and radius for the gray dots
-                centerX = width / 2;
-                centerY = height / 2;
-                radius = min(width, height) / 3;
-                angleStep = TWO_PI / numDots;
-
-                // Calculate positions of the gray dots
-                for (let i = 0; i < numDots; i++) {
-                    let angle = i * angleStep;
-                    let x = centerX + cos(angle) * radius;
-                    let y = centerY + sin(angle) * radius;
-                    grayDots.push(createVector(x, y));
-                }
-
-                // Start with the red dot at a random position
-                redDotPositionIndex = int(random(numDots));
-
-                // Set the participant ID in the hidden form field
-                let participantIDField = document.getElementById('participantID');
-                if (participantIDField) {
-                    participantIDField.value = participantID;
-                } else {
-                    console.error('Participant ID field not found');
-                }
-            }
-
             trialPhase = 0; // Move to the next phase
-            if (condition === "Passive") {
-                computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive condition
-            }
         }
     } else if (trialPhase === 0 || trialPhase === 7) {
         // Phase 0 and 7: Blank screen for 30 frames
@@ -238,7 +202,7 @@ function drawClockfaceWithHover() {
     noStroke();
     selectedDotIndex = -1; // Reset selected dot index
 
-    for (let i = 0; < grayDots.length; i++) {
+    for (let i = 0; i < grayDots.length; i++) {
         let dot = grayDots[i];
         let d = dist(mouseX, mouseY, dot.x, dot.y);
         if (d < 8) {
