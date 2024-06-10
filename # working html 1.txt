@@ -1,0 +1,79 @@
+# working html 
+# blocking canvas solved
+# Agency trigger sound is delayed
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Experiment</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: black;
+        }
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            z-index: 1;
+            position: relative;
+        }
+        .input-container input, .input-container button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .message-container {
+            display: none;
+            position: absolute;
+            top: 40%;
+            transform: translateY(-50%);
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 32px;
+            z-index: 1;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
+    <script src="sketch test.js" defer></script>
+</head>
+<body>
+    <div class="input-container" id="inputContainer">
+        <label for="subjectNumber">Subject Number:</label>
+        <input type="number" id="subjectNumber" required>
+        <label for="age">Age:</label>
+        <input type="number" id="age" required>
+        <button onclick="startExperiment()">Start Experiment</button>
+    </div>
+    <div class="message-container" id="messageContainer">This is a condition message.</div>
+    <form id="responseForm" action="https://docs.google.com/forms/d/e/1FAIpQLSds_d_hmvV0Yspch426PHSzEyBDshzZHMslFPdJ4OK-3gaJGg/formResponse" method="POST" target="hidden_iframe" onsubmit="submitted=true;">
+        <input type="hidden" name="entry.892808440" id="participantID">
+        <input type="hidden" name="entry.1649456539" id="subjectNumberField">
+        <input type="hidden" name="entry.1026104456" id="ageField">
+        <input type="hidden" name="entry.1758349203" id="trialNumber">
+        <input type="hidden" name="entry.1415919431" id="condition">
+        <input type="hidden" name="entry.1167738371" id="timeBeforeAction">
+        <input type="hidden" name="entry.1326915461" id="realDotIndex">
+        <input type="hidden" name="entry.305383644" id="selectedDotIndex">
+        <input type="hidden" name="entry.1705275570" id="dotDistance">
+        <input type="hidden" name="entry.902956387" id="timeEstimationError">
+        <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+    </form>
+</body>
+</html>
