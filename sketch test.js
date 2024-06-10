@@ -90,6 +90,9 @@ function draw() {
             keyPressOccurred = false; // Reset key press flag
             document.getElementById('messageContainer').style.display = 'none';
             trialPhase = 0; // Move to the next phase
+            if (condition === "Passive") {
+                computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive condition
+            }
         }
     } else if (trialPhase === 0 || trialPhase === 7) {
         // Phase 0 and 7: Blank screen for 30 frames
