@@ -22,26 +22,11 @@
     <script src="sketch test.js" defer></script>
 </head>
 <body>
-    <form id="responseForm" action="https://docs.google.com/forms/d/e/1FAIpQLSds_d_hmvV0Yspch426PHSzEyBDshzZHMslFPdJ4OK-3gaJGg/formRespnose" method="POST">
+    <form id="responseForm" action="https://docs.google.com/forms/d/e/1FAIpQLSds_d_hmvV0Yspch426PHSzEyBDshzZHMslFPdJ4OK-3gaJGg/formRespnose" method="POST" target="hidden_iframe" onsubmit="submitted=true;">
         <input type="hidden" name="entry.305383644" id="selectedDotIndex"> <!-- Replace entry.XXXXXXX with your field's entry ID -->
         <input type="hidden" name="entry.1758349203" id="responseTime"> <!-- Replace entry.YYYYYYY with your field's entry ID -->
         <input type="hidden" name="entry.1649456539" id="participantID"> <!-- Replace entry.ZZZZZZZ with your field's entry ID -->
+        <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
     </form>
-    <script>
-        document.getElementById('responseForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', event.target.action, true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    console.log('Response submitted');
-                }
-            };
-            var formData = new FormData(event.target);
-            var urlEncodedData = new URLSearchParams(formData).toString();
-            xhr.send(urlEncodedData);
-        });
-    </script>
 </body>
 </html>
