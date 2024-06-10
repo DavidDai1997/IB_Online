@@ -152,11 +152,15 @@ function draw() {
                 responseCounter++;
                 if (responseCounter >= 120) {
                     trialPhase = 9; // End the test after 120 responses
-                } else {
-                    trialPhase = 0; // Restart the trial
                 }
             }
         }
+        // Display the selected dot index for verification
+        textSize(32);
+        fill(255);
+        textAlign(CENTER, CENTER);
+        text(`Selected Dot Index: ${selectedDotIndex}`, width / 2, height - 50);
+        text(`Responses: ${responseCounter}/120`, width / 2, height - 100);
     } else if (trialPhase === 9) {
         // Phase 9: Show "demo over"
         background(0);
