@@ -33,37 +33,6 @@ function startExperiment() {
         document.getElementById('ageField').value = age;
         document.getElementById('inputContainer').style.display = 'none';
 
-        let canvas = createCanvas(1920, 1080);
-        centerCanvas();
-        textAlign(CENTER, CENTER);
-        textSize(32);
-        getAudioContext().suspend(); // Suspend the AudioContext initially
-
-        // Initialize the center and radius for the gray dots
-        centerX = width / 2;
-        centerY = height / 2;
-        radius = min(width, height) / 3;
-        angleStep = TWO_PI / numDots;
-
-        // Calculate positions of the gray dots
-        for (let i = 0; i < numDots; i++) {
-            let angle = i * angleStep;
-            let x = centerX + cos(angle) * radius;
-            let y = centerY + sin(angle) * radius;
-            grayDots.push(createVector(x, y));
-        }
-
-        // Start with the red dot at a random position
-        redDotPositionIndex = int(random(numDots));
-
-        // Set the participant ID in the hidden form field
-        let participantIDField = document.getElementById('participantID');
-        if (participantIDField) {
-            participantIDField.value = participantID;
-        } else {
-            console.error('Participant ID field not found');
-        }
-
         // Determine the condition order based on subject number
         conditionsOrder = subjectNumber % 2 === 0 ? ["Passive", "Agency"] : ["Agency", "Passive"];
 
@@ -89,6 +58,38 @@ function draw() {
             userStartAudio(); // Resume the AudioContext
             keyPressOccurred = false; // Reset key press flag
             document.getElementById('messageContainer').style.display = 'none';
+
+            // Create canvas only after the experiment starts
+            let canvas = createCanvas(1920, 1080);
+            centerCanvas();
+            textAlign(CENTER, CENTER);
+            textSize(32);
+
+            // Initialize the center and radius for the gray dots
+            centerX = width / 2;
+            centerY = height / 2;
+            radius = min(width, height) / 3;
+            angleStep = TWO_PI / numDots;
+
+            // Calculate positions of the gray dots
+            for (let i = 0; i < numDots; i++) {
+                let angle = i * angleStep;
+                let x = centerX + cos(angle) * radius;
+                let y = centerY + sin(angle) * radius;
+                grayDots.push(createVector(x, y));
+            }
+
+            // Start with the red dot at a random position
+            redDotPositionIndex = int(random(numDots));
+
+            // Set the participant ID in the hidden form field
+            let participantIDField = document.getElementById('participantID');
+            if (participantIDField) {
+                participantIDField.value = participantID;
+            } else {
+                console.error('Participant ID field not found');
+            }
+
             trialPhase = 0; // Move to the next phase
             if (condition === "Passive") {
                 computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive condition
@@ -124,21 +125,21 @@ function draw() {
             trialPhase++;
         } else if (condition === "Passive" && frameCount === computerActionFrame) {
             keypressSoundFile.play(); // Play the keypress sound
+            playSoundFrame = frameCount + 15; // Set the frame to play the pool sound
             timeBeforeAction = frameCount;
-            frameCount = 0;
             trialPhase++;
         }
     } else if (trialPhase === 3) {
-        // Phase 3: Wait for participant keypress (spacebar) or computer action in Passive condition
+        // Phase 3: Continue rotating for 15 frames for Passive condition
         drawClockface();
         drawRedDot();
-        if (condition === "Agency" && keyPressOccurred) {
-            keyPressOccurred = false; // Reset key press flag
-            playSoundFrame = frameCount + 15; // Set the frame to play the sound
+        if (frameCount === playSoundFrame) {
+            soundFile.play(); // Play the pool sound
+            realDotIndex = redDotPositionIndex;
             trialPhase++;
-        } else if (condition === "Passive" && frameCount === 15) {
-            playSoundFrame = frameCount + 15; // Set the frame to play the sound
-            trialPhase++;
+        } else {
+            frameCount++;
+            redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         }
     } else if (trialPhase === 4) {
         // Phase 4: Red dot keeps rotating for 60 frames after keypress
