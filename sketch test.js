@@ -17,20 +17,12 @@ let dotDistance, timeEstimationError;
 let experimentStarted = false; // To track if the experiment has started
 let computerActionFrame = -1; // Frame at which the computer triggers the sound in Passive condition
 let conditionsOrder = []; // Order of conditions for the participant
-let canvasCreated = false; // Track if the canvas is created
+let canvas;
 
 function preload() {
     console.log('Preloading sounds...');
     soundFile = loadSound('Pool2_44100.wav', soundLoaded, loadError);
     keypressSoundFile = loadSound('keypress_44100.wav', soundLoaded, loadError);
-}
-
-function setup() {
-    // Create canvas but do not display it yet
-    let canvas = createCanvas(1920, 1080);
-    canvas.hide();
-    textAlign(CENTER, CENTER);
-    textSize(32);
 }
 
 function startExperiment() {
@@ -55,6 +47,12 @@ function startExperiment() {
     }
 }
 
+function setup() {
+    noCanvas(); // Do not create a canvas initially
+    textAlign(CENTER, CENTER);
+    textSize(32);
+}
+
 function draw() {
     background(0);
     fill(255);
@@ -67,11 +65,10 @@ function draw() {
             userStartAudio(); // Resume the AudioContext
             keyPressOccurred = false; // Reset key press flag
             document.getElementById('messageContainer').style.display = 'none';
-            select('canvas').show(); // Show the canvas when trials start
 
-            if (!canvasCreated) {
+            if (!canvas) {
+                canvas = createCanvas(1920, 1080);
                 centerCanvas();
-                canvasCreated = true;
 
                 // Initialize the center and radius for the gray dots
                 centerX = width / 2;
@@ -220,7 +217,8 @@ function draw() {
             condition = conditionsOrder[trialNumber];
             document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
             document.getElementById('messageContainer').style.display = 'block';
-            select('canvas').hide(); // Hide the canvas when displaying the condition message
+            removeCanvas(); // Remove the canvas when displaying the condition message
+            canvas = null; // Reset the canvas variable
             trialPhase = -2; // Indicate that we are showing the next condition message
         } else {
             // Show demo over message
@@ -310,7 +308,9 @@ function centerCanvas() {
 }
 
 function windowResized() {
-    centerCanvas();
+    if (canvas) {
+        centerCanvas();
+    }
 }
 
 function calculateDotDistance(realDotIndex, selectedDotIndex) {
