@@ -124,6 +124,7 @@ function draw() {
 
         if (condition === "Agency" && keyPressOccurred) {
             timeBeforeAction = frameCount;
+            playSoundFrame = frameCount + 15;
             frameCount = 0;
             trialPhase++;
         } else if (condition === "Passive" && frameCount === computerActionFrame) {
