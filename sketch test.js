@@ -25,6 +25,14 @@ function preload() {
     keypressSoundFile = loadSound('keypress_44100.wav', soundLoaded, loadError);
 }
 
+function setup() {
+    // Create canvas but do not display it yet
+    let canvas = createCanvas(1920, 1080);
+    canvas.hide();
+    textAlign(CENTER, CENTER);
+    textSize(32);
+}
+
 function startExperiment() {
     subjectNumber = document.getElementById('subjectNumber').value;
     age = document.getElementById('age').value;
@@ -59,12 +67,10 @@ function draw() {
             userStartAudio(); // Resume the AudioContext
             keyPressOccurred = false; // Reset key press flag
             document.getElementById('messageContainer').style.display = 'none';
+            select('canvas').show(); // Show the canvas when trials start
 
             if (!canvasCreated) {
-                let canvas = createCanvas(1920, 1080);
                 centerCanvas();
-                textAlign(CENTER, CENTER);
-                textSize(32);
                 canvasCreated = true;
 
                 // Initialize the center and radius for the gray dots
@@ -214,6 +220,7 @@ function draw() {
             condition = conditionsOrder[trialNumber];
             document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
             document.getElementById('messageContainer').style.display = 'block';
+            select('canvas').hide(); // Hide the canvas when displaying the condition message
             trialPhase = -2; // Indicate that we are showing the next condition message
         } else {
             // Show demo over message
