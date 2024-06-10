@@ -71,7 +71,7 @@ function startExperiment() {
         condition = conditionsOrder[0];
         document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
         document.getElementById('messageContainer').style.display = 'block';
-        trialPhase = -1; // Start the experiment
+        trialPhase = -2; // Indicate that we are showing the initial condition message
     } else {
         alert("Please enter both Subject Number and Age.");
     }
@@ -83,8 +83,8 @@ function draw() {
 
     if (!soundLoadedFlag) {
         text('Loading sounds...', width / 2, height / 2);
-    } else if (trialPhase === -1) {
-        // Message already displayed in HTML
+    } else if (trialPhase === -2) {
+        // Display condition message and wait for key press to start
         if (keyPressOccurred && experimentStarted) {
             userStartAudio(); // Resume the AudioContext
             keyPressOccurred = false; // Reset key press flag
@@ -206,7 +206,7 @@ function draw() {
             condition = conditionsOrder[trialNumber];
             document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
             document.getElementById('messageContainer').style.display = 'block';
-            trialPhase = -1;
+            trialPhase = -2; // Indicate that we are showing the next condition message
         } else {
             // Show demo over message
             background(0);
