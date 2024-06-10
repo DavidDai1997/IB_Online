@@ -22,10 +22,29 @@
     <script src="sketch test.js" defer></script>
 </head>
 <body>
-    <form id="responseForm" action="https://formspree.io/f/mwkgdgvb" method="POST">
+    <form id="responseForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
         <input type="hidden" name="selectedDotIndex" id="selectedDotIndex">
         <input type="hidden" name="responseTime" id="responseTime">
         <input type="hidden" name="participantID" id="participantID">
     </form>
+    <script>
+        document.getElementById('responseForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://formspree.io/f/mwkgdgvb', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log('Response submitted');
+                }
+            };
+            var formData = new FormData(event.target);
+            var jsonData = {};
+            formData.forEach(function(value, key) {
+                jsonData[key] = value;
+            });
+            xhr.send(JSON.stringify(jsonData));
+        });
+    </script>
 </body>
 </html>
