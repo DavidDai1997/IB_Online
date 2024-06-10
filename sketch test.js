@@ -7,18 +7,21 @@ let frameCount = 0;
 let keyPressOccurred = false;
 let rotationContinuedFrames = 60;
 let redDotPositionIndex = 0;
-let soundFile;
+let soundFile, keypressSoundFile;
 let soundLoadedFlag = false;
 let playSoundFrame = -1;
 let selectedDotIndex = -1;
 let participantID = generateUniqueID(); // Generate a unique ID for each participant
-let subjectNumber, age, condition = "Agency", trialNumber = 0, realDotIndex, timeBeforeAction;
+let subjectNumber, age, condition, trialNumber = 0, realDotIndex, timeBeforeAction;
 let dotDistance, timeEstimationError;
 let experimentStarted = false; // To track if the experiment has started
+let computerActionFrame = -1; // Frame at which the computer triggers the sound in Passive condition
+let conditionsOrder = []; // Order of conditions for the participant
 
 function preload() {
-    console.log('Preloading sound...');
+    console.log('Preloading sounds...');
     soundFile = loadSound('Pool2_44100.wav', soundLoaded, loadError);
+    keypressSoundFile = loadSound('keypress_44100.wav', soundLoaded, loadError);
 }
 
 function startExperiment() {
@@ -61,7 +64,11 @@ function startExperiment() {
             console.error('Participant ID field not found');
         }
 
+        // Determine the condition order based on subject number
+        conditionsOrder = subjectNumber % 2 === 0 ? ["Passive", "Agency"] : ["Agency", "Passive"];
+
         experimentStarted = true; // Indicate the experiment has started
+        condition = conditionsOrder[0];
         trialPhase = -1; // Start the experiment
     } else {
         alert("Please enter both Subject Number and Age.");
@@ -73,9 +80,10 @@ function draw() {
     fill(255);
 
     if (!soundLoadedFlag) {
-        text('Loading sound...', width / 2, height / 2);
+        text('Loading sounds...', width / 2, height / 2);
     } else if (trialPhase === -1) {
-        text('Welcome! Press the spacebar to start.', width / 2, height / 2);
+        textSize(32);
+        text(`This is ${condition} condition, press the space key to start`, width / 2, height / 2);
         if (keyPressOccurred && experimentStarted) {
             userStartAudio(); // Resume the AudioContext
             keyPressOccurred = false; // Reset key press flag
@@ -104,17 +112,26 @@ function draw() {
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         frameCount++;
-        if (keyPressOccurred) {
+
+        if (condition === "Agency" && keyPressOccurred) {
+            timeBeforeAction = frameCount;
+            frameCount = 0;
+            trialPhase++;
+        } else if (condition === "Passive" && frameCount === computerActionFrame) {
+            keypressSoundFile.play(); // Play the keypress sound
             timeBeforeAction = frameCount;
             frameCount = 0;
             trialPhase++;
         }
     } else if (trialPhase === 3) {
-        // Phase 3: Wait for participant keypress (spacebar)
+        // Phase 3: Wait for participant keypress (spacebar) or computer action in Passive condition
         drawClockface();
         drawRedDot();
-        if (keyPressOccurred) {
+        if (condition === "Agency" && keyPressOccurred) {
             keyPressOccurred = false; // Reset key press flag
+            playSoundFrame = frameCount + 15; // Set the frame to play the sound
+            trialPhase++;
+        } else if (condition === "Passive" && frameCount === 15) {
             playSoundFrame = frameCount + 15; // Set the frame to play the sound
             trialPhase++;
         }
@@ -178,12 +195,19 @@ function draw() {
             }
         }
     } else if (trialPhase === 9) {
-        // Phase 9: Show "demo over"
-        background(0);
-        fill(255); // Set text color to white
-        textSize(32);
-        textAlign(CENTER, CENTER);
-        text("Demo Over", width / 2, height / 2);
+        // Phase 9: End of current trial
+        trialNumber++;
+        if (trialNumber < 2) {
+            condition = conditionsOrder[trialNumber];
+            trialPhase = -1;
+        } else {
+            // Show demo over message
+            background(0);
+            fill(255);
+            textSize(32);
+            textAlign(CENTER, CENTER);
+            text("Demo Over", width / 2, height / 2);
+        }
     }
 }
 
