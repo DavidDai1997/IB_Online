@@ -28,6 +28,7 @@ function startExperiment() {
         document.getElementById('subjectNumberField').value = subjectNumber;
         document.getElementById('ageField').value = age;
         document.getElementById('inputContainer').style.display = 'none';
+        document.getElementById('welcomeText').style.display = 'none';
 
         let canvas = createCanvas(1920, 1080);
         centerCanvas();
@@ -60,7 +61,7 @@ function startExperiment() {
             console.error('Participant ID field not found');
         }
 
-        trialPhase = -1; // Start the experiment
+        trialPhase = 0; // Start the experiment
     } else {
         alert("Please enter both Subject Number and Age.");
     }
@@ -73,13 +74,7 @@ function draw() {
     if (!soundLoadedFlag) {
         text('Loading sound...', width / 2, height / 2);
     } else if (trialPhase === -1) {
-        textSize(48); // Increase text size for 'Welcome' message
-        text('Welcome! Press the spacebar to start.', width / 2, height / 2);
-        if (keyPressOccurred) {
-            userStartAudio(); // Resume the AudioContext
-            keyPressOccurred = false; // Reset key press flag
-            trialPhase = 0; // Move to the next phase
-        }
+        // Do nothing here, handled by the HTML and CSS
     } else if (trialPhase === 0 || trialPhase === 7) {
         // Phase 0 and 7: Blank screen for 30 frames
         if (frameCount < 30) {

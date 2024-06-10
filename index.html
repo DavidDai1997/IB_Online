@@ -7,6 +7,7 @@
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -17,19 +18,21 @@
             display: block;
         }
         .input-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             display: flex;
             flex-direction: column;
             align-items: center;
             color: white;
+            margin-top: 20px; /* Add margin to separate from welcome text */
         }
         .input-container input, .input-container button {
             margin: 5px;
             padding: 10px;
             font-size: 16px;
+        }
+        .welcome-text {
+            color: white;
+            font-size: 48px; /* Larger text size */
+            text-align: center;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
@@ -37,6 +40,7 @@
     <script src="sketch test.js" defer></script>
 </head>
 <body>
+    <div class="welcome-text" id="welcomeText">Welcome! Press the spacebar to start.</div>
     <div class="input-container" id="inputContainer">
         <label for="subjectNumber">Subject Number:</label>
         <input type="number" id="subjectNumber" required>
