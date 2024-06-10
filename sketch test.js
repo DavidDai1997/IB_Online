@@ -17,6 +17,7 @@ let dotDistance, timeEstimationError;
 let experimentStarted = false; // To track if the experiment has started
 let computerActionFrame = -1; // Frame at which the computer triggers the sound in Passive condition
 let conditionsOrder = []; // Order of conditions for the participant
+let canvasCreated = false; // Track if the canvas is created
 
 function preload() {
     console.log('Preloading sounds...');
@@ -59,35 +60,37 @@ function draw() {
             keyPressOccurred = false; // Reset key press flag
             document.getElementById('messageContainer').style.display = 'none';
 
-            // Create canvas only after the experiment starts
-            let canvas = createCanvas(1920, 1080);
-            centerCanvas();
-            textAlign(CENTER, CENTER);
-            textSize(32);
+            if (!canvasCreated) {
+                let canvas = createCanvas(1920, 1080);
+                centerCanvas();
+                textAlign(CENTER, CENTER);
+                textSize(32);
+                canvasCreated = true;
 
-            // Initialize the center and radius for the gray dots
-            centerX = width / 2;
-            centerY = height / 2;
-            radius = min(width, height) / 3;
-            angleStep = TWO_PI / numDots;
+                // Initialize the center and radius for the gray dots
+                centerX = width / 2;
+                centerY = height / 2;
+                radius = min(width, height) / 3;
+                angleStep = TWO_PI / numDots;
 
-            // Calculate positions of the gray dots
-            for (let i = 0; i < numDots; i++) {
-                let angle = i * angleStep;
-                let x = centerX + cos(angle) * radius;
-                let y = centerY + sin(angle) * radius;
-                grayDots.push(createVector(x, y));
-            }
+                // Calculate positions of the gray dots
+                for (let i = 0; i < numDots; i++) {
+                    let angle = i * angleStep;
+                    let x = centerX + cos(angle) * radius;
+                    let y = centerY + sin(angle) * radius;
+                    grayDots.push(createVector(x, y));
+                }
 
-            // Start with the red dot at a random position
-            redDotPositionIndex = int(random(numDots));
+                // Start with the red dot at a random position
+                redDotPositionIndex = int(random(numDots));
 
-            // Set the participant ID in the hidden form field
-            let participantIDField = document.getElementById('participantID');
-            if (participantIDField) {
-                participantIDField.value = participantID;
-            } else {
-                console.error('Participant ID field not found');
+                // Set the participant ID in the hidden form field
+                let participantIDField = document.getElementById('participantID');
+                if (participantIDField) {
+                    participantIDField.value = participantID;
+                } else {
+                    console.error('Participant ID field not found');
+                }
             }
 
             trialPhase = 0; // Move to the next phase
@@ -137,10 +140,12 @@ function draw() {
             keypressSoundFile.stop(); // Stop the keypress sound before playing the pool sound
             soundFile.play(); // Play the pool sound
             realDotIndex = redDotPositionIndex;
+            frameCount = 0;
             trialPhase++;
         } else if (frameCount === playSoundFrame) {
             soundFile.play(); // Play the pool sound
             realDotIndex = redDotPositionIndex;
+            frameCount = 0;
             trialPhase++;
         } else {
             frameCount++;
