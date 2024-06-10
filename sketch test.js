@@ -133,7 +133,12 @@ function draw() {
         // Phase 3: Continue rotating for 15 frames for Passive condition
         drawClockface();
         drawRedDot();
-        if (frameCount === playSoundFrame) {
+        if (condition === "Passive" && frameCount === playSoundFrame) {
+            keypressSoundFile.stop(); // Stop the keypress sound before playing the pool sound
+            soundFile.play(); // Play the pool sound
+            realDotIndex = redDotPositionIndex;
+            trialPhase++;
+        } else if (frameCount === playSoundFrame) {
             soundFile.play(); // Play the pool sound
             realDotIndex = redDotPositionIndex;
             trialPhase++;
@@ -145,10 +150,6 @@ function draw() {
         // Phase 4: Red dot keeps rotating for 60 frames after keypress
         drawClockface();
         drawRedDot();
-        if (frameCount === playSoundFrame) {
-            soundFile.play(); // Play the sound 15 frames after keypress
-            realDotIndex = redDotPositionIndex;
-        }
         if (frameCount < rotationContinuedFrames) {
             frameCount++;
             redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
