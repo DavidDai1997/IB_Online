@@ -126,20 +126,22 @@ function draw() {
             keyPressOccurred = false;
             timeBeforeAction = frameCount;
             playSoundFrame = frameCount + 15;
-            frameCount = 0;
             trialPhase++;
+            frameCount = 0; // Reset the frame count for the next phase
         } else if (condition === "Passive" && frameCount === computerActionFrame) {
             keypressSoundFile.play(); // Play the keypress sound
             playSoundFrame = frameCount + 15; // Set the frame to play the pool sound
             timeBeforeAction = frameCount;
             trialPhase++;
+            frameCount = 0; // Reset the frame count for the next phase
         }
     } else if (trialPhase === 3) {
-        // Continue rotating for 15 frames
+        // Continue rotating for 15 frames after keypress in Agency condition
         drawClockface();
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
-        if (frameCount === playSoundFrame) {
+
+        if (frameCount === 15) {
             soundFile.play(); // Play the pool sound
             realDotIndex = redDotPositionIndex;
             frameCount = 0;
@@ -148,10 +150,10 @@ function draw() {
             frameCount++;
         }
     } else if (trialPhase === 4) {
-        // Red dot keeps rotating for 60 frames after keypress
+        // Red dot keeps rotating for 60 frames after pool sound
         drawClockface();
         drawRedDot();
-        if (frameCount < rotationContinuedFrames) {
+        if (frameCount < 60) {
             frameCount++;
             redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         } else {
