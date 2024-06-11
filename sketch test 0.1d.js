@@ -18,7 +18,8 @@ let experimentStarted = false; // To track if the experiment has started
 let computerActionFrame = -1; // Frame at which the computer triggers the sound in Passive condition
 let conditionsOrder = []; // Order of conditions for the participant
 let canvasCreated = false; // Track if the canvas is created
-let totalTrials = 4; // Number of trials for each condition
+let totalTrialsPerCondition = 4; // Number of trials for each condition
+let currentConditionIndex = 0;
 
 function preload() {
     console.log('Preloading sounds...');
@@ -39,7 +40,7 @@ function startExperiment() {
         conditionsOrder = subjectNumber % 2 === 0 ? ["Passive", "Agency"] : ["Agency", "Passive"];
 
         experimentStarted = true; // Indicate the experiment has started
-        condition = conditionsOrder[0];
+        condition = conditionsOrder[currentConditionIndex];
         document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
         document.getElementById('messageContainer').style.display = 'block';
         trialPhase = -2; // Indicate that we are showing the initial condition message
@@ -216,18 +217,27 @@ function draw() {
     } else if (trialPhase === 8) {
         // End of current trial
         trialNumber++;
-        if (trialNumber <= totalTrials) {
-            condition = conditionsOrder[(trialNumber - 1) % conditionsOrder.length];
-            document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
-            document.getElementById('messageContainer').style.display = 'block';
-            trialPhase = -2; // Indicate that we are showing the next condition message
+        if (trialNumber <= totalTrialsPerCondition) {
+            trialPhase = 0; // Start the next trial
+            if (condition === "Passive") {
+                computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive condition
+            }
         } else {
-            // Show demo over message
-            background(0);
-            fill(255);
-            textSize(32);
-            textAlign(CENTER, CENTER);
-            text("Demo Over", width / 2, height / 2);
+            currentConditionIndex++;
+            if (currentConditionIndex < conditionsOrder.length) {
+                condition = conditionsOrder[currentConditionIndex];
+                document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
+                document.getElementById('messageContainer').style.display = 'block';
+                trialPhase = -2; // Show the condition message for the new block
+                trialNumber = 1; // Reset trial number for the new condition
+            } else {
+                // Show demo over message
+                background(0);
+                fill(255);
+                textSize(32);
+                textAlign(CENTER, CENTER);
+                text("Demo Over", width / 2, height / 2);
+            }
         }
     }
 }
