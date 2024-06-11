@@ -21,6 +21,7 @@ let canvasCreated = false; // Track if the canvas is created
 let totalTrialsPerCondition = 4; // Number of trials for each condition
 let currentConditionIndex = 0;
 let showPlaySymbol = false;
+let experimentEnded = false; // Flag to indicate the experiment has ended
 
 function preload() {
     console.log('Preloading sounds...');
@@ -56,6 +57,10 @@ function draw() {
 
     if (!soundLoadedFlag) {
         text('Loading sounds...', width / 2, height / 2);
+    } else if (experimentEnded) {
+        textSize(32);
+        textAlign(CENTER, CENTER);
+        text("Demo Over", width / 2, height / 2);
     } else if (trialPhase === -2) {
         // Display condition message and wait for key press to start
         if (keyPressOccurred && experimentStarted) {
@@ -261,12 +266,7 @@ function drawPlaySymbol() {
                 trialPhase = -2; // Show the condition message for the new block
             }
         } else {
-            // Show demo over message
-            background(0);
-            fill(255);
-            textSize(32);
-            textAlign(CENTER, CENTER);
-            text("Demo Over", width / 2, height / 2);
+            experimentEnded = true; // Indicate the experiment has ended
         }
     }
 }
