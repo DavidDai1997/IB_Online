@@ -20,7 +20,7 @@ let conditionsOrder = []; // Order of conditions for the participant
 let canvasCreated = false; // Track if the canvas is created
 let totalTrialsPerCondition = 4; // Number of trials for each condition
 let currentConditionIndex = 0;
-let nextTrialButton; // Next trial button
+let showPlaySymbol = false;
 
 function preload() {
     console.log('Preloading sounds...');
@@ -221,11 +221,7 @@ function draw() {
                 }
 
                 trialPhase++;
-                // Show "Next Trial" button
-                nextTrialButton = createButton('Next Trial');
-                nextTrialButton.position(centerX - 50, centerY - 25);
-                nextTrialButton.size(100, 50);
-                nextTrialButton.mousePressed(startNextTrial);
+                showPlaySymbol = true; // Show play symbol after response
             }
         }
     } else if (trialPhase === 8) {
@@ -253,14 +249,27 @@ function draw() {
             text("Demo Over", width / 2, height / 2);
         }
     }
+
+    if (showPlaySymbol) {
+        drawPlaySymbol();
+    }
 }
 
-function startNextTrial() {
-    nextTrialButton.remove();
-    document.body.style.cursor = 'none'; // Hide cursor for the next trial
-    trialPhase = 0; // Start the next trial phase
-    if (condition === "Passive") {
-        computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive condition
+function drawPlaySymbol() {
+    const triangleSize = 30;
+    let isHovering = dist(mouseX, mouseY, centerX, centerY) < triangleSize;
+
+    fill(isHovering ? 'green' : 'grey');
+    noStroke();
+    triangle(centerX - triangleSize / 2, centerY - triangleSize / 2, centerX - triangleSize / 2, centerY + triangleSize / 2, centerX + triangleSize / 2, centerY);
+
+    if (mouseIsPressed && isHovering) {
+        showPlaySymbol = false; // Hide play symbol
+        document.body.style.cursor = 'none'; // Hide cursor for the next trial
+        trialPhase = 0; // Start the next trial phase
+        if (condition === "Passive") {
+            computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive condition
+        }
     }
 }
 
