@@ -1,5 +1,3 @@
-//working version
-//position of cursor is not reset
 let centerX, centerY, radius;
 let numDots = 120;
 let angleStep;
@@ -191,6 +189,8 @@ function draw() {
     } else if (trialPhase === 7) {
         // Response stage
         document.body.style.cursor = 'default'; // Show cursor
+        // Move cursor to center
+        moveCursorToCenter();
         drawClockfaceWithHover();
         if (mouseIsPressed) {
             if (selectedDotIndex !== -1) {
@@ -329,6 +329,20 @@ function centerCanvas() {
 
 function windowResized() {
     centerCanvas();
+}
+
+function moveCursorToCenter() {
+    // Move the cursor to the center of the canvas
+    let cursorX = centerX + canvas.elt.getBoundingClientRect().left;
+    let cursorY = centerY + canvas.elt.getBoundingClientRect().top;
+    let event = new MouseEvent('mousemove', {
+        clientX: cursorX,
+        clientY: cursorY,
+        view: window,
+        bubbles: true,
+        cancelable: true
+    });
+    window.dispatchEvent(event);
 }
 
 function calculateDotDistance(realDotIndex, selectedDotIndex) {
