@@ -226,27 +226,8 @@ function draw() {
         }
     } else if (trialPhase === 8) {
         // End of current trial
-        trialNumber++;
-        if (trialNumber <= totalTrialsPerCondition * conditionsOrder.length) {
-            if ((trialNumber - 1) % totalTrialsPerCondition === 0 && currentConditionIndex < conditionsOrder.length - 1) {
-                currentConditionIndex++;
-                condition = conditionsOrder[currentConditionIndex];
-                document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
-                document.getElementById('messageContainer').style.display = 'block';
-                trialPhase = -2; // Show the condition message for the new block
-            } else {
-                trialPhase = 0; // Start the next trial
-                if (condition === "Passive") {
-                    computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive condition
-                }
-            }
-        } else {
-            // Show demo over message
-            background(0);
-            fill(255);
-            textSize(32);
-            textAlign(CENTER, CENTER);
-            text("Demo Over", width / 2, height / 2);
+        if (showPlaySymbol) {
+            drawPlaySymbol();
         }
     }
 
@@ -269,6 +250,28 @@ function drawPlaySymbol() {
         trialPhase = 0; // Start the next trial phase
         if (condition === "Passive") {
             computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive condition
+        }
+        trialNumber++;
+        if (trialNumber <= totalTrialsPerCondition * conditionsOrder.length) {
+            if ((trialNumber - 1) % totalTrialsPerCondition === 0 && currentConditionIndex < conditionsOrder.length - 1) {
+                currentConditionIndex++;
+                condition = conditionsOrder[currentConditionIndex];
+                document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
+                document.getElementById('messageContainer').style.display = 'block';
+                trialPhase = -2; // Show the condition message for the new block
+            } else {
+                trialPhase = 0; // Start the next trial
+                if (condition === "Passive") {
+                    computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive condition
+                }
+            }
+        } else {
+            // Show demo over message
+            background(0);
+            fill(255);
+            textSize(32);
+            textAlign(CENTER, CENTER);
+            text("Demo Over", width / 2, height / 2);
         }
     }
 }
