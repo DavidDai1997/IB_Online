@@ -20,6 +20,7 @@ let conditionsOrder = []; // Order of conditions for the participant
 let canvasCreated = false; // Track if the canvas is created
 let totalTrialsPerCondition = 4; // Number of trials for each condition
 let currentConditionIndex = 0;
+let nextTrialButton; // Next trial button
 
 function preload() {
     console.log('Preloading sounds...');
@@ -189,8 +190,6 @@ function draw() {
     } else if (trialPhase === 7) {
         // Response stage
         document.body.style.cursor = 'default'; // Show cursor
-        // Move cursor to center
-        moveCursorToCenter();
         drawClockfaceWithHover();
         if (mouseIsPressed) {
             if (selectedDotIndex !== -1) {
@@ -222,6 +221,11 @@ function draw() {
                 }
 
                 trialPhase++;
+                // Show "Next Trial" button
+                nextTrialButton = createButton('Next Trial');
+                nextTrialButton.position(centerX - 50, centerY - 25);
+                nextTrialButton.size(100, 50);
+                nextTrialButton.mousePressed(startNextTrial);
             }
         }
     } else if (trialPhase === 8) {
@@ -248,6 +252,15 @@ function draw() {
             textAlign(CENTER, CENTER);
             text("Demo Over", width / 2, height / 2);
         }
+    }
+}
+
+function startNextTrial() {
+    nextTrialButton.remove();
+    document.body.style.cursor = 'none'; // Hide cursor for the next trial
+    trialPhase = 0; // Start the next trial phase
+    if (condition === "Passive") {
+        computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive condition
     }
 }
 
@@ -329,20 +342,6 @@ function centerCanvas() {
 
 function windowResized() {
     centerCanvas();
-}
-
-function moveCursorToCenter() {
-    // Move the cursor to the center of the canvas
-    let cursorX = centerX + canvas.elt.getBoundingClientRect().left;
-    let cursorY = centerY + canvas.elt.getBoundingClientRect().top;
-    let event = new MouseEvent('mousemove', {
-        clientX: cursorX,
-        clientY: cursorY,
-        view: window,
-        bubbles: true,
-        cancelable: true
-    });
-    window.dispatchEvent(event);
 }
 
 function calculateDotDistance(realDotIndex, selectedDotIndex) {
