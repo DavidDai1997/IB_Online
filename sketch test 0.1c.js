@@ -12,12 +12,13 @@ let soundLoadedFlag = false;
 let playSoundFrame = -1;
 let selectedDotIndex = -1;
 let participantID = generateUniqueID(); // Generate a unique ID for each participant
-let subjectNumber, age, condition, trialNumber = 0, realDotIndex, timeBeforeAction;
+let subjectNumber, age, condition, trialNumber = 1, realDotIndex, timeBeforeAction;
 let dotDistance, timeEstimationError;
 let experimentStarted = false; // To track if the experiment has started
 let computerActionFrame = -1; // Frame at which the computer triggers the sound in Passive condition
 let conditionsOrder = []; // Order of conditions for the participant
 let canvasCreated = false; // Track if the canvas is created
+let totalTrials = 4; // Number of trials for each condition
 
 function preload() {
     console.log('Preloading sounds...');
@@ -215,8 +216,8 @@ function draw() {
     } else if (trialPhase === 8) {
         // End of current trial
         trialNumber++;
-        if (trialNumber < 2) {
-            condition = conditionsOrder[trialNumber];
+        if (trialNumber <= totalTrials) {
+            condition = conditionsOrder[(trialNumber - 1) % conditionsOrder.length];
             document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
             document.getElementById('messageContainer').style.display = 'block';
             trialPhase = -2; // Indicate that we are showing the next condition message
