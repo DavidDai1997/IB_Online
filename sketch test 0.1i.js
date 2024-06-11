@@ -1,3 +1,4 @@
+// working version demo, all major issues fixed
 let centerX, centerY, radius;
 let numDots = 120;
 let angleStep;
