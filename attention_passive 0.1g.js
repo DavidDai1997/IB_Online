@@ -70,13 +70,22 @@ function draw() {
         textAlign(CENTER, CENTER);
         text("Demo Over", width / 2, height / 2);
     } else if (trialPhase === -1) {
-        // Initial message to start experiment
         if (!experimentStarted) {
             text("Press the space key to start the experiment.", width / 2, height / 2);
         } else {
             trialPhase = 0;
         }
     } else if (trialPhase === 0) {
+        // 500ms blank
+        if (frameCount < 30) {
+            frameCount++;
+        } else {
+            frameCount = 0;
+            trialPhase++;
+        }
+    } else if (trialPhase === 1) {
+        // Clock face 500ms
+        drawClockface();
         if (frameCount < 30) {
             frameCount++;
         } else {
@@ -84,15 +93,8 @@ function draw() {
             trialPhase++;
             setupColorChanges();
         }
-    } else if (trialPhase === 1) {
-        drawClockface();
-        if (frameCount < 30) {
-            frameCount++;
-        } else {
-            frameCount = 0;
-            trialPhase++;
-        }
     } else if (trialPhase === 2) {
+        // Red dot rotation, fixation starts changing color
         drawClockface();
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
@@ -107,6 +109,7 @@ function draw() {
             frameCount = 0;
         }
     } else if (trialPhase === 3) {
+        // 15 frames after keypress sound, play target pool sound
         drawClockface();
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
@@ -122,6 +125,7 @@ function draw() {
             frameCount++;
         }
     } else if (trialPhase === 4) {
+        // Wash-out period, color changing stops within or at the end
         drawClockface();
         drawRedDot();
         updateFixationColor();
@@ -134,6 +138,7 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 5) {
+        // Clock face 500ms
         drawClockface();
         if (frameCount < 30) {
             frameCount++;
@@ -142,6 +147,7 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 6) {
+        // Blank 500ms
         if (frameCount < 30) {
             frameCount++;
         } else {
@@ -149,6 +155,7 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 7) {
+        // Timing response stage
         document.body.style.cursor = 'default';
         drawClockfaceWithHover();
         if (mouseIsPressed) {
@@ -161,6 +168,7 @@ function draw() {
             }
         }
     } else if (trialPhase === 8) {
+        // Present color selection stage
         if (showPlaySymbol) {
             drawPlaySymbol();
         }
@@ -178,7 +186,8 @@ function draw() {
 function setupColorChanges() {
     presentedColors = shuffle(fixationColors).slice(0, 3);
     fixationColorSequence = [];
-    let totalFrames = 60 + computerActionFrame + 15 + washOutDuration; // 60 frames for blank and clock display, action time, action-outcome interval, washout period
+    computerActionFrame = int(random(60, 180)); // Random period for red dot rotation
+    let totalFrames = 60 + computerActionFrame + 15 + washOutDuration;
     let numColorChanges = floor(totalFrames / 30);
     for (let i = 0; i < numColorChanges; i++) {
         let rand = random();
@@ -298,7 +307,7 @@ function drawMostFrequentColorSelection() {
     fill(255);
     text("Which color appeared most frequently?", width / 2, height / 4);
 
-    let discY = height / 2;
+    let discY = height / 2 + 50;
     let discXSpacing = width / 6;
     let startX = width / 2 - discXSpacing;
 
@@ -338,7 +347,7 @@ function mousePressed() {
             }
         }
     } else if (mostFrequentColorPhase) {
-        let discY = height / 2;
+        let discY = height / 2 + 50;
         let discXSpacing = width / 6;
         let startX = width / 2 - discXSpacing;
 
