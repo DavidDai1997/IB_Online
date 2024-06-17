@@ -1,4 +1,4 @@
-// rgb change at fixation working, but not all the way to the end
+// sketch test 0.1l
 
 let centerX, centerY, radius;
 let numDots = 120;
@@ -160,7 +160,10 @@ function draw() {
                 currentFixationColorIndex = (currentFixationColorIndex + 1) % fixationColors.length;
             }
             fill(fixationColors[currentFixationColorIndex]);
-            ellipse(centerX, centerY, 5, 5); // Draw fixation point with changing color
+            ellipse(centerX, centerY, 10, 10); // Draw fixation point with changing color
+        } else {
+            fill(255); // White fixation point for other conditions
+            ellipse(centerX, centerY, 5, 5); // Draw fixation point
         }
     } else if (trialPhase === 3) {
         // Continue rotating for 15 frames after keypress in Agency condition
@@ -178,6 +181,18 @@ function draw() {
         } else {
             frameCount++;
         }
+
+        if (condition === "Passive_Attention") {
+            // Change the fixation color every 30 frames
+            if (frameCount % 30 === 0) {
+                currentFixationColorIndex = (currentFixationColorIndex + 1) % fixationColors.length;
+            }
+            fill(fixationColors[currentFixationColorIndex]);
+            ellipse(centerX, centerY, 10, 10); // Draw fixation point with changing color
+        } else {
+            fill(255); // White fixation point for other conditions
+            ellipse(centerX, centerY, 5, 5); // Draw fixation point
+        }
     } else if (trialPhase === 4) {
         // Red dot keeps rotating for washOutDuration frames after pool sound
         document.body.style.cursor = 'none'; // Hide cursor
@@ -190,20 +205,30 @@ function draw() {
             frameCount = 0;
             trialPhase++;
         }
+
+        if (condition === "Passive_Attention") {
+            // Change the fixation color every 30 frames
+            if (frameCount % 30 === 0) {
+                currentFixationColorIndex = (currentFixationColorIndex + 1) % fixationColors.length;
+            }
+            fill(fixationColors[currentFixationColorIndex]);
+            ellipse(centerX, centerY, 10, 10); // Draw fixation point with changing color
+        } else {
+            fill(255); // White fixation point for other conditions
+            ellipse(centerX, centerY, 5, 5); // Draw fixation point
+        }
     } else if (trialPhase === 5) {
         // Clockface remains for 30 frames
         document.body.style.cursor = 'none'; // Hide cursor
         drawClockface();
-        if (condition === "Passive_Attention") {
-            fill(255); // Reset fixation point color to white
-            ellipse(centerX, centerY, 5, 5);
-        }
         if (frameCount < 30) {
             frameCount++;
         } else {
             frameCount = 0;
             trialPhase++;
         }
+        fill(255); // Reset fixation point color to white
+        ellipse(centerX, centerY, 5, 5); // Draw fixation point
     } else if (trialPhase === 6) {
         // Blank screen for 30 frames
         document.body.style.cursor = 'none'; // Hide cursor
