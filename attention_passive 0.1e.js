@@ -71,10 +71,10 @@ function draw() {
         text("Demo Over", width / 2, height / 2);
     } else if (trialPhase === -1) {
         // Initial message to start experiment
-        text("Press the space key to start the experiment.", width / 2, height / 2);
-        if (keyIsPressed && key === ' ') {
+        if (!experimentStarted) {
+            text("Press the space key to start the experiment.", width / 2, height / 2);
+        } else {
             trialPhase = 0;
-            keyIsPressed = false;
         }
     } else if (trialPhase === 0) {
         if (frameCount < 30) {
@@ -99,7 +99,7 @@ function draw() {
         frameCount++;
         updateFixationColor();
 
-        if (frameCount === computerActionFrame) {
+        if (frameCount >= computerActionFrame) {
             keypressSoundFile.play();
             playSoundFrame = frameCount + 15;
             timeBeforeAction = frameCount;
@@ -178,7 +178,7 @@ function draw() {
 function setupColorChanges() {
     presentedColors = shuffle(fixationColors).slice(0, 3);
     fixationColorSequence = [];
-    let totalFrames = timeBeforeAction + 15 + washOutDuration;
+    let totalFrames = computerActionFrame + 15 + washOutDuration;
     let numColorChanges = floor(totalFrames / 30);
     for (let i = 0; i < numColorChanges; i++) {
         let rand = random();
@@ -396,11 +396,12 @@ function startExperiment() {
     let subjectNumberField = document.getElementById('subjectNumber');
     let ageField = document.getElementById('age');
 
-    if (subjectNumberField && ageField) {
+    if (subjectNumberField && ageField && subjectNumberField.value && ageField.value) {
         subjectNumber = subjectNumberField.value;
         age = ageField.value;
 
         document.getElementById('inputContainer').style.display = 'none';
+        document.getElementById('messageContainer').style.display = 'none';
         experimentStarted = true;
         trialPhase = -1; // Start the trial
     } else {
