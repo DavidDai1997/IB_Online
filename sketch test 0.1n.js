@@ -159,7 +159,7 @@ function draw() {
                 currentColorIndex = (currentColorIndex + 1) % 4; // 0, 1, 2, 3 cycle
             }
             if (currentColorIndex % 2 === 0) {
-                fill(selectedColors[currentColorIndex / 2]);
+                fill(selectedColors[Math.floor(currentColorIndex / 2)]);
             } else {
                 fill(255); // White
             }
@@ -191,7 +191,7 @@ function draw() {
                 currentColorIndex = (currentColorIndex + 1) % 4; // 0, 1, 2, 3 cycle
             }
             if (currentColorIndex % 2 === 0) {
-                fill(selectedColors[currentColorIndex / 2]);
+                fill(selectedColors[Math.floor(currentColorIndex / 2)]);
             } else {
                 fill(255); // White
             }
@@ -219,7 +219,7 @@ function draw() {
                 currentColorIndex = (currentColorIndex + 1) % 4; // 0, 1, 2, 3 cycle
             }
             if (currentColorIndex % 2 === 0) {
-                fill(selectedColors[currentColorIndex / 2]);
+                fill(selectedColors[Math.floor(currentColorIndex / 2)]);
             } else {
                 fill(255); // White
             }
@@ -237,10 +237,6 @@ function draw() {
         } else {
             frameCount = 0;
             trialPhase++;
-        }
-        if (condition !== "Passive_Attention") {
-            fill(255); // Draw fixation point for other conditions
-            ellipse(centerX, centerY, 16, 16); // Draw fixation point, same size as red dot
         }
     } else if (trialPhase === 6) {
         // Blank screen for 30 frames
@@ -316,6 +312,12 @@ function drawPlaySymbol() {
         showPlaySymbol = false; // Hide play symbol
         document.body.style.cursor = 'none'; // Hide cursor for the next trial
         if (trialNumber < totalTrialsPerCondition * conditionsOrder.length) {
+            // Select new colors for each trial
+            if (condition === "Passive_Attention") {
+                selectedColors = randomTwoColors(fixationColors);
+                currentColorIndex = 0;
+            }
+
             trialPhase = 0; // Start the next trial phase
             trialNumber++;
             if (condition === "Passive_Attention") {
@@ -343,8 +345,10 @@ function drawClockface() {
     }
 
     // Draw the fixation point at the center
-    fill(255);
-    ellipse(centerX, centerY, 16, 16); // Same size as red dot
+    if (trialPhase < 5 || trialPhase === 7) {
+        fill(255);
+        ellipse(centerX, centerY, 16, 16); // Same size as red dot
+    }
 }
 
 function drawClockfaceWithHover() {
@@ -365,8 +369,10 @@ function drawClockfaceWithHover() {
     }
 
     // Draw the fixation point at the center
-    fill(255);
-    ellipse(centerX, centerY, 16, 16); // Same size as red dot
+    if (trialPhase === 7) {
+        fill(255);
+        ellipse(centerX, centerY, 16, 16); // Same size as red dot
+    }
 }
 
 function drawRedDot() {
