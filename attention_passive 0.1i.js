@@ -165,18 +165,14 @@ function draw() {
                 timeEstimationError = dotDistance * 16.666;
 
                 trialPhase++;
-                showPlaySymbol = true;
+                colorSelectionPhase = true; // Directly transition to color selection phase
             }
         }
     } else if (trialPhase === 8) {
         // Present color selection stage
-        if (showPlaySymbol) {
-            drawPlaySymbol();
+        if (colorSelectionPhase) {
+            drawColorSelection();
         }
-    }
-
-    if (colorSelectionPhase) {
-        drawColorSelection();
     }
 
     if (mostFrequentColorPhase) {
@@ -268,7 +264,7 @@ function drawPlaySymbol() {
     if (mouseIsPressed && isHovering) {
         showPlaySymbol = false;
         document.body.style.cursor = 'none';
-        colorSelectionPhase = true;
+        mostFrequentColorPhase = true; // Transition to most frequent color selection phase
         trialPhase++;
     }
 }
@@ -277,9 +273,9 @@ function drawColorSelection() {
     textSize(24);
     textAlign(CENTER, CENTER);
     fill(255);
-    text("What colors did you see?", width / 2, height / 4);
+    text("What colors did you see?", width / 2, height / 8);
 
-    let discY = height / 2 + 100;
+    let discY = height - 150;
     let discXSpacing = width / 6;
     let startX = width / 2 - discXSpacing * 2;
 
@@ -306,9 +302,9 @@ function drawMostFrequentColorSelection() {
     textSize(24);
     textAlign(CENTER, CENTER);
     fill(255);
-    text("Which color appeared most frequently?", width / 2, height / 4);
+    text("Which color appeared most frequently?", width / 2, height / 8);
 
-    let discY = height / 2 + 100;
+    let discY = height - 150;
     let discXSpacing = width / 6;
     let startX = width / 2 - discXSpacing;
 
@@ -333,7 +329,7 @@ function drawMostFrequentColorSelection() {
 
 function mousePressed() {
     if (colorSelectionPhase && participantColorSelections.length < 3) {
-        let discY = height / 2 + 100;
+        let discY = height - 150;
         let discXSpacing = width / 6;
         let startX = width / 2 - discXSpacing * 2;
 
@@ -348,7 +344,7 @@ function mousePressed() {
             }
         }
     } else if (mostFrequentColorPhase) {
-        let discY = height / 2 + 100;
+        let discY = height - 150;
         let discXSpacing = width / 6;
         let startX = width / 2 - discXSpacing;
 
