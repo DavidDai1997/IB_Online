@@ -151,8 +151,7 @@ function draw() {
         drawClockfaceWithHover();
         if (mouseIsPressed) {
             if (selectedDotIndex !== -1) {
-                dotDistance = calculateDotDistance
-                (realDotIndex, selectedDotIndex);
+                dotDistance = calculateDotDistance(realDotIndex, selectedDotIndex);
                 timeEstimationError = dotDistance * 16.666;
 
                 trialPhase++;
@@ -389,4 +388,20 @@ function calculateDotDistance(realDotIndex, selectedDotIndex) {
         distance += 120;
     }
     return distance;
+}
+
+function startExperiment() {
+    let subjectNumberField = document.getElementById('subjectNumber');
+    let ageField = document.getElementById('age');
+
+    if (subjectNumberField && ageField) {
+        subjectNumber = subjectNumberField.value;
+        age = ageField.value;
+
+        document.getElementById('inputContainer').style.display = 'none';
+        experimentStarted = true;
+        trialPhase = -1; // Start the trial
+    } else {
+        alert("Please enter both Subject Number and Age.");
+    }
 }
