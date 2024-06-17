@@ -70,9 +70,11 @@ function draw() {
         textAlign(CENTER, CENTER);
         text("Demo Over", width / 2, height / 2);
     } else if (trialPhase === -1) {
+        // Initial message to start experiment
         text("Press the space key to start the experiment.", width / 2, height / 2);
         if (keyIsPressed && key === ' ') {
             trialPhase = 0;
+            keyIsPressed = false;
         }
     } else if (trialPhase === 0) {
         if (frameCount < 30) {
@@ -215,7 +217,7 @@ function drawClockface() {
     }
 
     fill(currentFixationColor || 'white');
-    ellipse(centerX, centerY, 5, 5);
+    ellipse(centerX, centerY, 16, 16); // Make the fixation same size as the rotating red disc
 }
 
 function drawClockfaceWithHover() {
@@ -235,7 +237,7 @@ function drawClockfaceWithHover() {
     }
 
     fill(currentFixationColor || 'white');
-    ellipse(centerX, centerY, 5, 5);
+    ellipse(centerX, centerY, 16, 16); // Make the fixation same size as the rotating red disc
 }
 
 function drawRedDot() {
