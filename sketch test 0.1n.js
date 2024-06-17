@@ -29,6 +29,7 @@ let fixationColors = ['red', 'blue', 'green'];
 let selectedColors = []; // Colors selected for each trial
 let currentColorIndex = 0; // Track the current color index for the color-changing loop
 let colorChangeLimit = 0; // Number of full color change cycles
+let rotationDuration = 0; // Total duration for which the red dot will rotate
 
 function preload() {
     console.log('Preloading sounds...');
@@ -117,7 +118,8 @@ function draw() {
             trialPhase = 0; // Move to the next phase
             if (condition === "Passive_Attention") {
                 computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive_Attention condition
-                colorChangeLimit = Math.floor(computerActionFrame / 30); // Calculate the number of full color change cycles
+                rotationDuration = computerActionFrame + 15 + int(random([30, 60, 90, 120])); // Duration for red dot rotation
+                colorChangeLimit = Math.floor(rotationDuration / 30); // Calculate the number of full color change cycles
             }
         }
     } else if (trialPhase === 0) {
@@ -223,9 +225,9 @@ function draw() {
             trialPhase++;
         }
 
-        if (condition === "Passive_Attention" && Math.floor(frameCount / 30) < colorChangeLimit) {
+        if (condition === "Passive_Attention" && Math.floor((frameCount + computerActionFrame + 15) / 30) < colorChangeLimit) {
             // Change the fixation color every 30 frames within the color change limit
-            if (frameCount % 30 === 0) {
+            if ((frameCount + computerActionFrame + 15) % 30 === 0) {
                 currentColorIndex = (currentColorIndex + 1) % 4; // 0, 1, 2, 3 cycle
             }
             if (currentColorIndex % 2 === 0) {
@@ -336,7 +338,8 @@ function drawPlaySymbol() {
             trialNumber++;
             if (condition === "Passive_Attention") {
                 computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive_Attention condition
-                colorChangeLimit = Math.floor(computerActionFrame / 30); // Calculate the number of full color change cycles
+                rotationDuration = computerActionFrame + 15 + int(random([30, 60, 90, 120])); // Duration for red dot rotation
+                colorChangeLimit = Math.floor(rotationDuration / 30); // Calculate the number of full color change cycles
             }
             if ((trialNumber - 1) % totalTrialsPerCondition === 0 && currentConditionIndex < conditionsOrder.length - 1) {
                 currentConditionIndex++;
