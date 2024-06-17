@@ -1,5 +1,4 @@
-// sketch test 0.1l
-// working mostly rgb changes till red dot dissapears
+// sketch test 0.1j.js
 
 let centerX, centerY, radius;
 let numDots = 120;
@@ -228,8 +227,10 @@ function draw() {
             frameCount = 0;
             trialPhase++;
         }
-        fill(255); // Reset fixation point color to white
-        ellipse(centerX, centerY, 5, 5); // Draw fixation point
+        if (condition !== "Passive_Attention") {
+            fill(255); // Draw fixation point for other conditions
+            ellipse(centerX, centerY, 5, 5);
+        }
     } else if (trialPhase === 6) {
         // Blank screen for 30 frames
         document.body.style.cursor = 'none'; // Hide cursor
@@ -243,6 +244,8 @@ function draw() {
         // Response stage
         document.body.style.cursor = 'default'; // Show cursor
         drawClockfaceWithHover();
+        fill(255); // Draw fixation point
+        ellipse(centerX, centerY, 5, 5); // Draw fixation point
         if (mouseIsPressed) {
             if (selectedDotIndex !== -1) {
                 // Log and submit response
