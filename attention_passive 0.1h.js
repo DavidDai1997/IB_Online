@@ -74,6 +74,7 @@ function draw() {
             text("Press the space key to start the experiment.", width / 2, height / 2);
         } else {
             trialPhase = 0;
+            document.getElementById('messageContainer').style.display = 'none';
         }
     } else if (trialPhase === 0) {
         // 500ms blank
@@ -187,7 +188,7 @@ function setupColorChanges() {
     presentedColors = shuffle(fixationColors).slice(0, 3);
     fixationColorSequence = [];
     computerActionFrame = int(random(60, 180)); // Random period for red dot rotation
-    let totalFrames = 60 + computerActionFrame + 15 + washOutDuration;
+    let totalFrames = 60 + computerActionFrame + 15 + washOutDuration; // 60 frames for blank and clock display, action time, action-outcome interval, washout period
     let numColorChanges = floor(totalFrames / 30);
     for (let i = 0; i < numColorChanges; i++) {
         let rand = random();
@@ -278,7 +279,7 @@ function drawColorSelection() {
     fill(255);
     text("What colors did you see?", width / 2, height / 4);
 
-    let discY = height / 2;
+    let discY = height / 2 + 100;
     let discXSpacing = width / 6;
     let startX = width / 2 - discXSpacing * 2;
 
@@ -307,7 +308,7 @@ function drawMostFrequentColorSelection() {
     fill(255);
     text("Which color appeared most frequently?", width / 2, height / 4);
 
-    let discY = height / 2 + 50;
+    let discY = height / 2 + 100;
     let discXSpacing = width / 6;
     let startX = width / 2 - discXSpacing;
 
@@ -332,7 +333,7 @@ function drawMostFrequentColorSelection() {
 
 function mousePressed() {
     if (colorSelectionPhase && participantColorSelections.length < 3) {
-        let discY = height / 2;
+        let discY = height / 2 + 100;
         let discXSpacing = width / 6;
         let startX = width / 2 - discXSpacing * 2;
 
@@ -347,7 +348,7 @@ function mousePressed() {
             }
         }
     } else if (mostFrequentColorPhase) {
-        let discY = height / 2 + 50;
+        let discY = height / 2 + 100;
         let discXSpacing = width / 6;
         let startX = width / 2 - discXSpacing;
 
