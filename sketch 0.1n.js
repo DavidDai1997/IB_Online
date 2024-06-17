@@ -1,6 +1,3 @@
-// 0.1 m
-// working
-// next : random color
 let centerX, centerY, radius;
 let numDots = 120;
 let angleStep;
@@ -30,6 +27,7 @@ let washOutDuration; // New washOutDuration variable
 // New variables for Passive_Attention condition
 let fixationColors = ['red', 'blue', 'green'];
 let currentFixationColorIndex = 0;
+let selectedColors = []; // Colors selected for each trial
 
 function preload() {
     console.log('Preloading sounds...');
@@ -109,6 +107,12 @@ function draw() {
                 }
             }
 
+            // Select two random colors for the Passive_Attention condition
+            if (condition === "Passive_Attention") {
+                selectedColors = randomTwoColors(fixationColors);
+                currentFixationColorIndex = 0;
+            }
+
             trialPhase = 0; // Move to the next phase
             if (condition === "Passive" || condition === "Passive_Attention") {
                 computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive and Passive_Attention conditions
@@ -158,13 +162,17 @@ function draw() {
         if (condition === "Passive_Attention") {
             // Change the fixation color every 30 frames
             if (frameCount % 30 === 0) {
-                currentFixationColorIndex = (currentFixationColorIndex + 1) % fixationColors.length;
+                currentFixationColorIndex = (currentFixationColorIndex + 1) % 3; // 0, 1, 2 cycle
             }
-            fill(fixationColors[currentFixationColorIndex]);
+            if (currentFixationColorIndex === 2) {
+                fill(255); // White
+            } else {
+                fill(selectedColors[currentFixationColorIndex]);
+            }
             ellipse(centerX, centerY, 10, 10); // Draw fixation point with changing color
         } else {
             fill(255); // White fixation point for other conditions
-            ellipse(centerX, centerY, 5, 5); // Draw fixation point
+            ellipse(centerX, centerY, 10, 10); // Draw fixation point
         }
     } else if (trialPhase === 3) {
         // Continue rotating for 15 frames after keypress in Agency condition
@@ -186,13 +194,17 @@ function draw() {
         if (condition === "Passive_Attention") {
             // Change the fixation color every 30 frames
             if (frameCount % 30 === 0) {
-                currentFixationColorIndex = (currentFixationColorIndex + 1) % fixationColors.length;
+                currentFixationColorIndex = (currentFixationColorIndex + 1) % 3; // 0, 1, 2 cycle
             }
-            fill(fixationColors[currentFixationColorIndex]);
+            if (currentFixationColorIndex === 2) {
+                fill(255); // White
+            } else {
+                fill(selectedColors[currentFixationColorIndex]);
+            }
             ellipse(centerX, centerY, 10, 10); // Draw fixation point with changing color
         } else {
             fill(255); // White fixation point for other conditions
-            ellipse(centerX, centerY, 5, 5); // Draw fixation point
+            ellipse(centerX, centerY, 10, 10); // Draw fixation point
         }
     } else if (trialPhase === 4) {
         // Red dot keeps rotating for washOutDuration frames after pool sound
@@ -210,13 +222,17 @@ function draw() {
         if (condition === "Passive_Attention") {
             // Change the fixation color every 30 frames
             if (frameCount % 30 === 0) {
-                currentFixationColorIndex = (currentFixationColorIndex + 1) % fixationColors.length;
+                currentFixationColorIndex = (currentFixationColorIndex + 1) % 3; // 0, 1, 2 cycle
             }
-            fill(fixationColors[currentFixationColorIndex]);
+            if (currentFixationColorIndex === 2) {
+                fill(255); // White
+            } else {
+                fill(selectedColors[currentFixationColorIndex]);
+            }
             ellipse(centerX, centerY, 10, 10); // Draw fixation point with changing color
         } else {
             fill(255); // White fixation point for other conditions
-            ellipse(centerX, centerY, 5, 5); // Draw fixation point
+            ellipse(centerX, centerY, 10, 10); // Draw fixation point
         }
     } else if (trialPhase === 5) {
         // Clockface remains for 30 frames
@@ -230,7 +246,7 @@ function draw() {
         }
         if (condition !== "Passive_Attention") {
             fill(255); // Draw fixation point for other conditions
-            ellipse(centerX, centerY, 5, 5);
+            ellipse(centerX, centerY, 10, 10);
         }
     } else if (trialPhase === 6) {
         // Blank screen for 30 frames
@@ -246,7 +262,7 @@ function draw() {
         document.body.style.cursor = 'default'; // Show cursor
         drawClockfaceWithHover();
         fill(255); // Draw fixation point
-        ellipse(centerX, centerY, 5, 5); // Draw fixation point
+        ellipse(centerX, centerY, 10, 10); // Draw fixation point
         if (mouseIsPressed) {
             if (selectedDotIndex !== -1) {
                 // Log and submit response
@@ -334,7 +350,7 @@ function drawClockface() {
 
     // Draw the fixation point at the center
     fill(255);
-    ellipse(centerX, centerY, 5, 5); // Smaller dot with a diameter of 5
+    ellipse(centerX, centerY, 10, 10); // Smaller dot with a diameter of 10
 }
 
 function drawClockfaceWithHover() {
@@ -356,7 +372,7 @@ function drawClockfaceWithHover() {
 
     // Draw the fixation point at the center
     fill(255);
-    ellipse(centerX, centerY, 5, 5); // Smaller dot with a diameter of 5
+    ellipse(centerX, centerY, 10, 10); // Smaller dot with a diameter of 10
 }
 
 function drawRedDot() {
@@ -402,6 +418,19 @@ function centerCanvas() {
 
 function windowResized() {
     centerCanvas();
+}
+
+function randomTwoColors(colors) {
+    let shuffled = shuffleArray(colors);
+    return shuffled.slice(0, 2);
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }
 
 function calculateDotDistance(realDotIndex, selectedDotIndex) {
