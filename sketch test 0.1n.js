@@ -44,8 +44,8 @@ function startExperiment() {
         document.getElementById('ageField').value = age;
         document.getElementById('inputContainer').style.display = 'none';
 
-        // Determine the condition order based on subject number
-        conditionsOrder = subjectNumber % 2 === 0 ? ["Passive", "Agency", "Passive_Attention"] : ["Agency", "Passive", "Passive_Attention"];
+        // Skip Agency and Passive trials, directly go to Passive_Attention for debugging
+        conditionsOrder = ["Passive_Attention"];
 
         experimentStarted = true; // Indicate the experiment has started
         condition = conditionsOrder[currentConditionIndex];
@@ -114,8 +114,8 @@ function draw() {
             }
 
             trialPhase = 0; // Move to the next phase
-            if (condition === "Passive" || condition === "Passive_Attention") {
-                computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive and Passive_Attention conditions
+            if (condition === "Passive_Attention") {
+                computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive_Attention condition
             }
         }
     } else if (trialPhase === 0) {
@@ -145,13 +145,7 @@ function draw() {
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         frameCount++;
 
-        if (condition === "Agency" && keyPressOccurred) {
-            keyPressOccurred = false;
-            timeBeforeAction = frameCount;
-            playSoundFrame = frameCount + 15;
-            trialPhase++;
-            frameCount = 0; // Reset the frame count for the next phase
-        } else if ((condition === "Passive" || condition === "Passive_Attention") && frameCount === computerActionFrame) {
+        if (frameCount === computerActionFrame) {
             keypressSoundFile.play(); // Play the keypress sound
             playSoundFrame = frameCount + 15; // Set the frame to play the pool sound
             timeBeforeAction = frameCount;
@@ -169,10 +163,10 @@ function draw() {
             } else {
                 fill(255); // White
             }
-            ellipse(centerX, centerY, 10, 10); // Draw fixation point with changing color
+            ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
         } else {
             fill(255); // White fixation point for other conditions
-            ellipse(centerX, centerY, 16, 16); // Draw fixation point
+            ellipse(centerX, centerY, 16, 16); // Draw fixation point, same size as red dot
         }
     } else if (trialPhase === 3) {
         // Continue rotating for 15 frames after keypress in Agency condition
@@ -201,10 +195,10 @@ function draw() {
             } else {
                 fill(255); // White
             }
-            ellipse(centerX, centerY, 10, 10); // Draw fixation point with changing color
+            ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
         } else {
             fill(255); // White fixation point for other conditions
-            ellipse(centerX, centerY, 16, 16); // Draw fixation point
+            ellipse(centerX, centerY, 16, 16); // Draw fixation point, same size as red dot
         }
     } else if (trialPhase === 4) {
         // Red dot keeps rotating for washOutDuration frames after pool sound
@@ -229,10 +223,10 @@ function draw() {
             } else {
                 fill(255); // White
             }
-            ellipse(centerX, centerY, 10, 10); // Draw fixation point with changing color
+            ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
         } else {
             fill(255); // White fixation point for other conditions
-            ellipse(centerX, centerY, 16, 16); // Draw fixation point
+            ellipse(centerX, centerY, 16, 16); // Draw fixation point, same size as red dot
         }
     } else if (trialPhase === 5) {
         // Clockface remains for 30 frames
@@ -246,7 +240,7 @@ function draw() {
         }
         if (condition !== "Passive_Attention") {
             fill(255); // Draw fixation point for other conditions
-            ellipse(centerX, centerY, 16, 16);
+            ellipse(centerX, centerY, 16, 16); // Draw fixation point, same size as red dot
         }
     } else if (trialPhase === 6) {
         // Blank screen for 30 frames
@@ -262,7 +256,7 @@ function draw() {
         document.body.style.cursor = 'default'; // Show cursor
         drawClockfaceWithHover();
         fill(255); // Draw fixation point
-        ellipse(centerX, centerY, 16, 16); // Draw fixation point
+        ellipse(centerX, centerY, 16, 16); // Draw fixation point, same size as red dot
         if (mouseIsPressed) {
             if (selectedDotIndex !== -1) {
                 // Log and submit response
@@ -324,8 +318,8 @@ function drawPlaySymbol() {
         if (trialNumber < totalTrialsPerCondition * conditionsOrder.length) {
             trialPhase = 0; // Start the next trial phase
             trialNumber++;
-            if (condition === "Passive" || condition === "Passive_Attention") {
-                computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive and Passive_Attention conditions
+            if (condition === "Passive_Attention") {
+                computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive_Attention condition
             }
             if ((trialNumber - 1) % totalTrialsPerCondition === 0 && currentConditionIndex < conditionsOrder.length - 1) {
                 currentConditionIndex++;
@@ -350,7 +344,7 @@ function drawClockface() {
 
     // Draw the fixation point at the center
     fill(255);
-    ellipse(centerX, centerY, 16, 16); // Smaller dot with a diameter of 5
+    ellipse(centerX, centerY, 16, 16); // Same size as red dot
 }
 
 function drawClockfaceWithHover() {
@@ -372,7 +366,7 @@ function drawClockfaceWithHover() {
 
     // Draw the fixation point at the center
     fill(255);
-    ellipse(centerX, centerY, 16, 16); // Smaller dot with a diameter of 5
+    ellipse(centerX, centerY, 16, 16); // Same size as red dot
 }
 
 function drawRedDot() {
