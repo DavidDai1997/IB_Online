@@ -9,8 +9,7 @@ let soundFile, keypressSoundFile;
 let soundLoadedFlag = false;
 let playSoundFrame = -1;
 let selectedDotIndex = -1;
-let participantID = generateUniqueID();
-let subjectNumber, age, trialNumber = 1, realDotIndex, timeBeforeAction;
+let trialNumber = 1, realDotIndex, timeBeforeAction;
 let dotDistance, timeEstimationError;
 let experimentStarted = false;
 let computerActionFrame = -1;
@@ -42,15 +41,13 @@ function setup() {
     centerCanvas();
     textAlign(CENTER, CENTER);
     textSize(32);
-    userStartAudio(); // Resume the AudioContext
+    userStartAudio();
 
-    // Initialize the center and radius for the gray dots
     centerX = width / 2;
     centerY = height / 2;
     radius = min(width, height) / 3;
     angleStep = TWO_PI / numDots;
 
-    // Calculate positions of the gray dots
     for (let i = 0; i < numDots; i++) {
         let angle = i * angleStep;
         let x = centerX + cos(angle) * radius;
@@ -58,17 +55,8 @@ function setup() {
         grayDots.push(createVector(x, y));
     }
 
-    // Start with the red dot at a random position
     redDotPositionIndex = int(random(numDots));
     currentFixationColor = 'white';
-
-    // Set the participant ID in the hidden form field
-    let participantIDField = document.getElementById('participantID');
-    if (participantIDField) {
-        participantIDField.value = participantID;
-    } else {
-        console.error('Participant ID field not found');
-    }
 }
 
 function draw() {
@@ -87,7 +75,6 @@ function draw() {
             trialPhase = 0;
         }
     } else if (trialPhase === 0) {
-        // Blank screen for 30 frames
         if (frameCount < 30) {
             frameCount++;
         } else {
@@ -95,7 +82,6 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 1) {
-        // Clockface shows for 30 frames
         drawClockface();
         if (frameCount < 30) {
             frameCount++;
@@ -105,7 +91,6 @@ function draw() {
             setupColorChanges();
         }
     } else if (trialPhase === 2) {
-        // Red dot appears and starts rotating
         drawClockface();
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
@@ -113,30 +98,28 @@ function draw() {
         updateFixationColor();
 
         if (frameCount === computerActionFrame) {
-            keypressSoundFile.play(); // Play the keypress sound
-            playSoundFrame = frameCount + 15; // Set the frame to play the pool sound
+            keypressSoundFile.play();
+            playSoundFrame = frameCount + 15;
             timeBeforeAction = frameCount;
             trialPhase++;
             frameCount = 0;
         }
     } else if (trialPhase === 3) {
-        // Continue rotating for 15 frames after keypress in Passive condition
         drawClockface();
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         updateFixationColor();
 
         if (frameCount === 15) {
-            soundFile.play(); // Play the pool sound
+            soundFile.play();
             realDotIndex = redDotPositionIndex;
-            washOutDuration = int(random([30, 60, 90, 120])); // Set washOutDuration
+            washOutDuration = int(random([30, 60, 90, 120]));
             frameCount = 0;
             trialPhase++;
         } else {
             frameCount++;
         }
     } else if (trialPhase === 4) {
-        // Red dot keeps rotating for washOutDuration frames after pool sound
         drawClockface();
         drawRedDot();
         updateFixationColor();
@@ -149,7 +132,6 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 5) {
-        // Clockface remains for 30 frames
         drawClockface();
         if (frameCount < 30) {
             frameCount++;
@@ -158,7 +140,6 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 6) {
-        // Blank screen for 30 frames
         if (frameCount < 30) {
             frameCount++;
         } else {
@@ -166,51 +147,22 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 7) {
-        // Response phase for subjective timing
-        document.body.style.cursor = 'default'; // Show cursor
+        document.body.style.cursor = 'default';
         drawClockfaceWithHover();
         if (mouseIsPressed) {
             if (selectedDotIndex !== -1) {
-                // Log and submit response
-                dotDistance = calculateDotDistance(realDotIndex, selectedDotIndex);
+                dotDistance = calculateDotDistance
+                (realDotIndex, selectedDotIndex);
                 timeEstimationError = dotDistance * 16.666;
 
-                let selectedDotIndexField = document.getElementById('selectedDotIndex');
-                let timeBeforeActionField = document.getElementById('timeBeforeAction');
-                let trialNumberField = document.getElementById('trialNumber');
-                let realDotIndexField = document.getElementById('realDotIndex');
-                let dotDistanceField = document.getElementById('dotDistance');
-                let timeEstimationErrorField = document.getElementById('timeEstimationError');
-                let washOutDurationField = document.getElementById('washOutDuration'); // New field
-
-                if (selectedDotIndexField && timeBeforeActionField && trialNumberField && realDotIndexField && dotDistanceField && timeEstimationErrorField && washOutDurationField) {
-                    selectedDotIndexField.value = selectedDotIndex;
-                    timeBeforeActionField.value = timeBeforeAction;
-                    trialNumberField.value = trialNumber;
-                    realDotIndexField.value = realDotIndex;
-                    dotDistanceField.value = dotDistance;
-                    timeEstimationErrorField.value = timeEstimationError;
-                    washOutDurationField.value = washOutDuration; // Log washOutDuration
-
-                    // Submit form
-                    document.getElementById('responseForm').submit();
-                } else {
-                    console.error('Form fields not found');
-                }
-
                 trialPhase++;
-                showPlaySymbol = true; // Show play symbol after response
+                showPlaySymbol = true;
             }
         }
     } else if (trialPhase === 8) {
-        // End of current trial
         if (showPlaySymbol) {
             drawPlaySymbol();
         }
-    }
-
-    if (showPlaySymbol) {
-        drawPlaySymbol();
     }
 
     if (colorSelectionPhase) {
@@ -237,7 +189,7 @@ function setupColorChanges() {
             fixationColorSequence.push(presentedColors[2]);
         }
     }
-    fixationColorSequence.push('white'); // Revert to original color if extra frames
+    fixationColorSequence.push('white');
     colorChangeFrame = 0;
     fixationColorIndex = 0;
 }
@@ -257,28 +209,28 @@ function updateFixationColor() {
 }
 
 function drawClockface() {
-    fill(128); // Set fill color to gray
+    fill(128);
     noStroke();
     for (let dot of grayDots) {
         ellipse(dot.x, dot.y, 16, 16);
     }
 
     fill(currentFixationColor || 'white');
-    ellipse(centerX, centerY, 5, 5); // Smaller dot with a diameter of 5
+    ellipse(centerX, centerY, 5, 5);
 }
 
 function drawClockfaceWithHover() {
     noStroke();
-    selectedDotIndex = -1; // Reset selected dot index
+    selectedDotIndex = -1;
 
     for (let i = 0; i < grayDots.length; i++) {
         let dot = grayDots[i];
         let d = dist(mouseX, mouseY, dot.x, dot.y);
         if (d < 8) {
-            fill(255, 0, 0); // Turn red if hovered
+            fill(255, 0, 0);
             selectedDotIndex = i;
         } else {
-            fill(128); // Set fill color to gray
+            fill(128);
         }
         ellipse(dot.x, dot.y, 16, 16);
     }
@@ -305,50 +257,8 @@ function drawPlaySymbol() {
     if (mouseIsPressed && isHovering) {
         showPlaySymbol = false;
         document.body.style.cursor = 'none';
-        if (colorSelectionPhase) {
-            colorSelectionPhase = false;
-            mostFrequentColorPhase = true;
-        } else if (mostFrequentColorPhase) {
-            mostFrequentColorPhase = false;
-            accuracy = participantColorSelections.reduce((acc, color) => acc + (presentedColors.includes(color) ? 1 : 0), 0);
-            correctness = mostFrequentColorSelection === presentedColors[0] ? 1 : 0;
-            let persentedColorField = document.getElementById('persentedColor');
-            let firstColorField = document.getElementById('firstColor');
-            let secondColorField = document.getElementById('secondColor');
-            let thirdColorField = document.getElementById('thirdColor');
-            let accField = document.getElementById('acc');
-            let correctField = document.getElementById('correct');
-
-            if (persentedColorField && firstColorField && secondColorField && thirdColorField && accField && correctField) {
-                persentedColorField.value = JSON.stringify(presentedColors);
-                firstColorField.value = fixationColorSequence.filter(color => color === presentedColors[0]).length;
-                secondColorField.value = fixationColorSequence.filter(color => color === presentedColors[1]).length;
-                thirdColorField.value = fixationColorSequence.filter(color => color === presentedColors[2]).length;
-                accField.value = accuracy;
-                correctField.value = correctness;
-
-                document.getElementById('responseForm').submit();
-            } else {
-                console.error('Form fields not found');
-            }
-
-            if (trialNumber < totalTrials) {
-                trialPhase = 0;
-                trialNumber++;
-                computerActionFrame = int(random([60, 90, 120, 150]));
-            } else {
-                experimentEnded = true;
-            }
-        } else {
-            trialPhase = 0;
-            if (trialNumber <= totalTrials) {
-                trialPhase = 0;
-                trialNumber++;
-                computerActionFrame = int(random([60, 90, 120, 150]));
-            } else {
-                experimentEnded = true;
-            }
-        }
+        colorSelectionPhase = true;
+        trialPhase++;
     }
 }
 
