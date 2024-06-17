@@ -82,6 +82,7 @@ function draw() {
         } else {
             frameCount = 0;
             trialPhase++;
+            setupColorChanges();
         }
     } else if (trialPhase === 1) {
         drawClockface();
@@ -90,7 +91,6 @@ function draw() {
         } else {
             frameCount = 0;
             trialPhase++;
-            setupColorChanges();
         }
     } else if (trialPhase === 2) {
         drawClockface();
@@ -178,7 +178,7 @@ function draw() {
 function setupColorChanges() {
     presentedColors = shuffle(fixationColors).slice(0, 3);
     fixationColorSequence = [];
-    let totalFrames = computerActionFrame + 15 + washOutDuration;
+    let totalFrames = 60 + computerActionFrame + 15 + washOutDuration; // 60 frames for blank and clock display, action time, action-outcome interval, washout period
     let numColorChanges = floor(totalFrames / 30);
     for (let i = 0; i < numColorChanges; i++) {
         let rand = random();
@@ -401,7 +401,7 @@ function startExperiment() {
         age = ageField.value;
 
         document.getElementById('inputContainer').style.display = 'none';
-        document.getElementById('messageContainer').style.display = 'none';
+        document.getElementById('messageContainer').style.display = 'block';
         experimentStarted = true;
         trialPhase = -1; // Start the trial
     } else {

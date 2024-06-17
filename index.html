@@ -36,7 +36,7 @@
         .message-container {
             display: none;
             position: absolute;
-            top: 40%;
+            top: 50%;
             transform: translateY(-50%);
             width: 100%;
             text-align: center;
@@ -47,7 +47,7 @@
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
-    <script src="attention_passive 0.1e.js" defer></script>
+    <script src="attention_passive 0.1f.js" defer></script>
 </head>
 <body>
     <div class="input-container" id="inputContainer">
@@ -57,7 +57,7 @@
         <input type="number" id="age" required>
         <button onclick="startExperiment()">Start Experiment</button>
     </div>
-    <div class="message-container" id="messageContainer">This is a condition message.</div>
+    <div class="message-container" id="messageContainer">Press the space key to start the experiment.</div>
     <form id="responseForm" action="https://docs.google.com/forms/d/e/1FAIpQLSds_d_hmvV0Yspch426PHSzEyBDshzZHMslFPdJ4OK-3gaJGg/formResponse" method="POST" target="hidden_iframe" onsubmit="submitted=true;">
         <input type="hidden" name="entry.892808440" id="participantID">
         <input type="hidden" name="entry.1649456539" id="subjectNumberField">
