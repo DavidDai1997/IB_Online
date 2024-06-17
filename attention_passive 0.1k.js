@@ -1,4 +1,3 @@
-// partially working, lots of bugs
 let centerX, centerY, radius;
 let numDots = 120;
 let angleStep;
@@ -164,9 +163,9 @@ function draw() {
             if (selectedDotIndex !== -1) {
                 dotDistance = calculateDotDistance(realDotIndex, selectedDotIndex);
                 timeEstimationError = dotDistance * 16.666;
-
                 trialPhase++;
                 colorSelectionPhase = true; // Directly transition to color selection phase
+                resetSelections(); // Reset color selections for the new trial
             }
         }
     } else if (trialPhase === 8) {
@@ -200,6 +199,7 @@ function setupColorChanges() {
     fixationColorSequence.push('white');
     colorChangeFrame = 0;
     fixationColorIndex = 0;
+    currentFixationColor = fixationColorSequence[0]; // Ensure the fixation color starts changing in the first trial
 }
 
 function updateFixationColor() {
@@ -243,7 +243,7 @@ function drawClockfaceWithHover() {
         ellipse(dot.x, dot.y, 16, 16);
     }
 
-    fill(currentFixationColor || 'white');
+    fill('white'); // Reset to original color during response stage
     ellipse(centerX, centerY, 16, 16); // Make the fixation same size as the rotating red disc
 }
 
@@ -338,6 +338,11 @@ function drawMostFrequentColorSelection() {
     }
 }
 
+function resetSelections() {
+    participantColorSelections = [];
+    mostFrequentColorSelection = null;
+}
+
 function mousePressed() {
     if (colorSelectionPhase && participantColorSelections.length < 3) {
         let discY = height - 150;
@@ -349,7 +354,9 @@ function mousePressed() {
             let y = discY;
             if (dist(mouseX, mouseY, x, y) < 25) {
                 let color = fixationColors[i];
-                if (!participantColorSelections.includes(color)) {
+                if (participantColorSelections.includes(color)) {
+                    participantColorSelections = participantColorSelections.filter(c => c !== color); // Unselect color
+                } else {
                     participantColorSelections.push(color);
                 }
             }
