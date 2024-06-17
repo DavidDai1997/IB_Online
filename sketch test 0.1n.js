@@ -28,6 +28,7 @@ let washOutDuration; // New washOutDuration variable
 let fixationColors = ['red', 'blue', 'green'];
 let selectedColors = []; // Colors selected for each trial
 let currentColorIndex = 0; // Track the current color index for the color-changing loop
+let colorChangeLimit = 0; // Number of full color change cycles
 
 function preload() {
     console.log('Preloading sounds...');
@@ -116,6 +117,7 @@ function draw() {
             trialPhase = 0; // Move to the next phase
             if (condition === "Passive_Attention") {
                 computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive_Attention condition
+                colorChangeLimit = Math.floor(computerActionFrame / 30); // Calculate the number of full color change cycles
             }
         }
     } else if (trialPhase === 0) {
@@ -153,8 +155,8 @@ function draw() {
             frameCount = 0; // Reset the frame count for the next phase
         }
 
-        if (condition === "Passive_Attention") {
-            // Change the fixation color every 30 frames
+        if (condition === "Passive_Attention" && Math.floor(frameCount / 30) < colorChangeLimit) {
+            // Change the fixation color every 30 frames within the color change limit
             if (frameCount % 30 === 0) {
                 currentColorIndex = (currentColorIndex + 1) % 4; // 0, 1, 2, 3 cycle
             }
@@ -164,6 +166,10 @@ function draw() {
                 fill(255); // White
             }
             ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
+        } else if (condition === "Passive_Attention") {
+            // Hide the fixation point after the color change limit
+            fill(0); // Black to hide
+            ellipse(centerX, centerY, 16, 16); // Draw hidden fixation point
         } else {
             fill(255); // White fixation point for other conditions
             ellipse(centerX, centerY, 16, 16); // Draw fixation point, same size as red dot
@@ -185,8 +191,8 @@ function draw() {
             frameCount++;
         }
 
-        if (condition === "Passive_Attention") {
-            // Change the fixation color every 30 frames
+        if (condition === "Passive_Attention" && Math.floor(frameCount / 30) < colorChangeLimit) {
+            // Change the fixation color every 30 frames within the color change limit
             if (frameCount % 30 === 0) {
                 currentColorIndex = (currentColorIndex + 1) % 4; // 0, 1, 2, 3 cycle
             }
@@ -196,6 +202,10 @@ function draw() {
                 fill(255); // White
             }
             ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
+        } else if (condition === "Passive_Attention") {
+            // Hide the fixation point after the color change limit
+            fill(0); // Black to hide
+            ellipse(centerX, centerY, 16, 16); // Draw hidden fixation point
         } else {
             fill(255); // White fixation point for other conditions
             ellipse(centerX, centerY, 16, 16); // Draw fixation point, same size as red dot
@@ -213,8 +223,8 @@ function draw() {
             trialPhase++;
         }
 
-        if (condition === "Passive_Attention") {
-            // Change the fixation color every 30 frames
+        if (condition === "Passive_Attention" && Math.floor(frameCount / 30) < colorChangeLimit) {
+            // Change the fixation color every 30 frames within the color change limit
             if (frameCount % 30 === 0) {
                 currentColorIndex = (currentColorIndex + 1) % 4; // 0, 1, 2, 3 cycle
             }
@@ -224,6 +234,10 @@ function draw() {
                 fill(255); // White
             }
             ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
+        } else if (condition === "Passive_Attention") {
+            // Hide the fixation point after the color change limit
+            fill(0); // Black to hide
+            ellipse(centerX, centerY, 16, 16); // Draw hidden fixation point
         } else {
             fill(255); // White fixation point for other conditions
             ellipse(centerX, centerY, 16, 16); // Draw fixation point, same size as red dot
@@ -322,6 +336,7 @@ function drawPlaySymbol() {
             trialNumber++;
             if (condition === "Passive_Attention") {
                 computerActionFrame = int(random([60, 90, 120, 150])); // Set the computer action frame for Passive_Attention condition
+                colorChangeLimit = Math.floor(computerActionFrame / 30); // Calculate the number of full color change cycles
             }
             if ((trialNumber - 1) % totalTrialsPerCondition === 0 && currentConditionIndex < conditionsOrder.length - 1) {
                 currentConditionIndex++;
