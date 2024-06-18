@@ -33,6 +33,7 @@ let colorCycle = [1, 0, 2, 0]; // Simplified color index cycle with white separa
 let colorCycleIndex = 0; // Track the current index in the color cycle
 let colorFrames = 0; // Track the number of frames for the current color
 let totalFrameCount = 0; // To keep track of the total frame count across phases
+let totalTrialFrameCount = 0;
 
 
 function preload() {
