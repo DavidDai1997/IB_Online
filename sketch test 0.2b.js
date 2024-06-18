@@ -1,10 +1,9 @@
-// small flash in phase 4-5
 let centerX, centerY, radius;
 let numDots = 120;
 let angleStep;
 let grayDots = [];
 let trialPhase = -1; // Start with the welcome phase
-let frameCount = 0;
+let frameCount = 0; // Total frame count from phase 2 to phase 4
 let keyPressOccurred = false;
 let rotationContinuedFrames = 60;
 let redDotPositionIndex = 0;
@@ -30,7 +29,7 @@ let fixationColors = ['red', 'blue', 'green'];
 let selectedColors = []; // Colors selected for each trial
 let colorCycle = [1, 0, 2, 0]; // Simplified color index cycle with white separating the colors
 let colorCycleIndex = 0; // Track the current index in the color cycle
-let colorFrames = 1; // Track the number of frames for the current color
+let colorFrames = 1; // Start color frames at 1
 
 function preload() {
     console.log('Preloading sounds...');
@@ -149,7 +148,7 @@ function draw() {
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         frameCount++;
-        console.log(`Phase: 2, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${frameCount}`);
+        console.log(`Phase: ${trialPhase}, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${frameCount}`);
 
         if (frameCount === computerActionFrame) {
             keypressSoundFile.play(); // Play the keypress sound
@@ -180,7 +179,7 @@ function draw() {
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         frameCount++;
-        console.log(`Phase: 3, Frame Count: ${frameCount}`);
+        console.log(`Phase: ${trialPhase}, Frame Count: ${frameCount}`);
 
         if (frameCount === 15) {
             soundFile.play(); // Play the pool sound
@@ -209,7 +208,7 @@ function draw() {
         drawClockface();
         drawRedDot();
         frameCount++;
-        console.log(`Phase: 4, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${frameCount}`);
+        console.log(`Phase: ${trialPhase}, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${frameCount}`);
 
         if (frameCount < washOutDuration) {
             redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
