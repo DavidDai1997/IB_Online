@@ -199,6 +199,7 @@ function draw() {
                 currentColorIndex = (currentColorIndex + 1) % 4; // Cycle through selected colors and white
                 colorFrames = 0; // Reset color frames to 0
             }
+            console.log(`Phase: ${trialPhase}, Color Index: ${currentColorIndex}, Color Frames: ${colorFrames}`);
             if (currentColorIndex % 2 === 0) {
                 fill(selectedColors[Math.floor(currentColorIndex / 2)]);
             } else {
@@ -229,6 +230,7 @@ function draw() {
             } else {
                 currentColorIndex = (currentColorIndex + 1) % 4; // Cycle through selected colors and white
                 colorFrames = 0; // Reset color frames to 0
+            console.log(`Phase: ${trialPhase}, Color Index: ${currentColorIndex}, Color Frames: ${colorFrames}`);
             }
             if (currentColorIndex % 2 === 0) {
                 fill(selectedColors[Math.floor(currentColorIndex / 2)]);
