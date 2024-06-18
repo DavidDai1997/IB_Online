@@ -202,12 +202,14 @@ function draw() {
         totalTrialFrameCount++;
 
         if (frameCount === 1) {
-            if (colorFrames < 30) {
-                colorFrames++;
-            } else {
-                colorCycleIndex = (colorCycleIndex + 1) % 4;
-                colorFrames = 1;
-            }
+            colorFrames = 0;  // Reset to ensure the first color change lasts full 30 frames
+        }
+
+        if (colorFrames < 30) {
+            colorFrames++;
+        } else {
+            colorCycleIndex = (colorCycleIndex + 1) % 4;
+            colorFrames = 1;
         }
 
         if (frameCount < washOutDuration) {
@@ -218,12 +220,6 @@ function draw() {
         }
 
         if (condition === "Passive_Attention") {
-            if (colorFrames < 30) {
-                colorFrames++;
-            } else {
-                colorCycleIndex = (colorCycleIndex + 1) % 4;
-                colorFrames = 1;
-            }
             applyColor(colorCycle[colorCycleIndex]);
             ellipse(centerX, centerY, 16, 16);
         } else {
@@ -297,7 +293,6 @@ function draw() {
     }
 }
 
-
 function applyColor(index) {
     switch (index) {
         case 1:
@@ -314,49 +309,44 @@ function applyColor(index) {
 }
 
 function drawClockface() {
-    // Draw the gray dots
-    fill(128); // Set fill color to gray
+    fill(128);
     noStroke();
     for (let dot of grayDots) {
-        ellipse(dot.x, dot.y, 16, 16); // Increased size to 16
+        ellipse(dot.x, dot.y, 16, 16);
     }
 
-    // Draw the fixation point at the center
     if (trialPhase < 5 || trialPhase === 7) {
         fill(255);
-        ellipse(centerX, centerY, 16, 16); // Same size as red dot
+        ellipse(centerX, centerY, 16, 16);
     }
 }
 
 function drawClockfaceWithHover() {
-    // Draw the gray dots with hover effect
     noStroke();
-    selectedDotIndex = -1; // Reset selected dot index
+    selectedDotIndex = -1;
 
     for (let i = 0; i < grayDots.length; i++) {
         let dot = grayDots[i];
         let d = dist(mouseX, mouseY, dot.x, dot.y);
         if (d < 8) {
-            fill(255, 0, 0); // Turn red if hovered
+            fill(255, 0, 0);
             selectedDotIndex = i;
         } else {
-            fill(128); // Set fill color to gray
+            fill(128);
         }
-        ellipse(dot.x, dot.y, 16, 16); // Increased size to 16
+        ellipse(dot.x, dot.y, 16, 16);
     }
 
-    // Draw the fixation point at the center
     if (trialPhase === 7) {
         fill(255);
-        ellipse(centerX, centerY, 16, 16); // Same size as red dot
+        ellipse(centerX, centerY, 16, 16);
     }
 }
 
 function drawRedDot() {
     if (redDotPositionIndex < grayDots.length) {
-        // Draw the red dot at the current gray dot position
         fill(255, 0, 0);
-        ellipse(grayDots[redDotPositionIndex].x, grayDots[redDotPositionIndex].y, 16, 16); // Increased size to 16
+        ellipse(grayDots[redDotPositionIndex].x, grayDots[redDotPositionIndex].y, 16, 16);
     }
 }
 
@@ -369,31 +359,30 @@ function drawPlaySymbol() {
     triangle(centerX - triangleSize / 2, centerY - triangleSize / 2, centerX - triangleSize / 2, centerY + triangleSize / 2, centerX + triangleSize / 2, centerY);
 
     if (mouseIsPressed && isHovering) {
-        showPlaySymbol = false; // Hide play symbol
-        document.body.style.cursor = 'none'; // Hide cursor for the next trial
+        showPlaySymbol = false;
+        document.body.style.cursor = 'none';
         if (trialNumber < totalTrialsPerCondition * conditionsOrder.length) {
-            // Select new colors for each trial
             if (condition === "Passive_Attention") {
                 selectedColors = randomTwoColors(fixationColors);
                 colorCycleIndex = 0;
-                colorFrames = 0; // Reset color frames
+                colorFrames = 0;
             }
 
-            trialPhase = 0; // Start the next trial phase
+            trialPhase = 0;
             trialNumber++;
             if (condition === "Passive_Attention") {
-                computerActionFrame = int(random([75, 105, 135, 165])); // Set the computer action frame for Passive_Attention condition
-                washOutDuration = int(random([30, 60, 90, 120])); // Ensure washout duration makes the total duration divisible by 30
+                computerActionFrame = int(random([75, 105, 135, 165]));
+                washOutDuration = int(random([30, 60, 90, 120]));
             }
             if ((trialNumber - 1) % totalTrialsPerCondition === 0 && currentConditionIndex < conditionsOrder.length - 1) {
                 currentConditionIndex++;
                 condition = conditionsOrder[currentConditionIndex];
                 document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
                 document.getElementById('messageContainer').style.display = 'block';
-                trialPhase = -2; // Show the condition message for the new block
+                trialPhase = -2;
             }
         } else {
-            experimentEnded = true; // Indicate the experiment has ended
+            experimentEnded = true;
         }
     }
 }
