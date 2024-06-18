@@ -115,6 +115,7 @@ function draw() {
             }
         }
     } else if (trialPhase === 0) {
+        document.body.style.cursor = 'none'; // Hide cursor
         if (frameCount < 30) {
             frameCount++;
         } else {
@@ -122,6 +123,7 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 1) {
+        document.body.style.cursor = 'none'; // Hide cursor
         drawClockface();
         if (frameCount < 30) {
             frameCount++;
@@ -130,6 +132,7 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 2) {
+        document.body.style.cursor = 'none'; // Hide cursor
         drawClockface();
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
@@ -159,6 +162,7 @@ function draw() {
             ellipse(centerX, centerY, 16, 16);
         }
     } else if (trialPhase === 3) {
+        document.body.style.cursor = 'none'; // Hide cursor
         drawClockface();
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
@@ -180,18 +184,14 @@ function draw() {
             ellipse(centerX, centerY, 16, 16);
         }
     } else if (trialPhase === 4) {
+        document.body.style.cursor = 'none'; // Hide cursor
         drawClockface();
         drawRedDot();
         frameCount++;
         totalTrialFrameCount++;
 
-        if (frameCount === 1) {
-            if (colorFrames < 30) {
-                colorFrames++;
-            } else {
-                colorCycleIndex = (colorCycleIndex + 1) % 4;
-                colorFrames = 1;
-            }
+        if (frameCount % 30 === 0) {
+            colorCycleIndex = (colorCycleIndex + 1) % 4;
         }
 
         if (frameCount < washOutDuration) {
@@ -209,6 +209,7 @@ function draw() {
             ellipse(centerX, centerY, 16, 16);
         }
     } else if (trialPhase === 5) {
+        document.body.style.cursor = 'none'; // Hide cursor
         drawClockface();
         if (frameCount < 30) {
             frameCount++;
@@ -217,6 +218,7 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 6) {
+        document.body.style.cursor = 'none'; // Hide cursor
         if (frameCount < 30) {
             frameCount++;
         } else {
@@ -224,6 +226,7 @@ function draw() {
             trialPhase++;
         }
     } else if (trialPhase === 7) {
+        document.body.style.cursor = 'default'; // Show cursor
         drawClockfaceWithHover();
         fill(255);
         ellipse(centerX, centerY, 16, 16);
