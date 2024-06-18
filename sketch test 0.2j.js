@@ -1,4 +1,3 @@
-// fixation don't change in wash-out period
 let centerX, centerY, radius;
 let numDots = 120;
 let angleStep;
