@@ -161,14 +161,11 @@ function draw() {
             if (colorFrames < 30) {
                 colorFrames++;
             } else {
-                currentColorIndex = (currentColorIndex + 1) % 4; // 0, 1, 2, 3 cycle
-                colorFrames = 1; // Start the new color frame count
+                currentColorIndex = (currentColorIndex + 1) % 3; // Correct modulus value to cycle through 3 colors
+                colorFrames = 0; // Reset color frames to 0
             }
-            if (currentColorIndex % 2 === 0) {
-                fill(selectedColors[Math.floor(currentColorIndex / 2)]);
-            } else {
-                fill(255); // White
-            }
+            console.log(`Phase: ${trialPhase}, Color Index: ${currentColorIndex}, Color Frames: ${colorFrames}`);
+            fill(selectedColors[currentColorIndex]);
             ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
         } else {
             fill(255); // White fixation point for other conditions
@@ -195,14 +192,10 @@ function draw() {
             if (colorFrames < 30) {
                 colorFrames++;
             } else {
-                currentColorIndex = (currentColorIndex + 1) % 4; // 0, 1, 2, 3 cycle
-                colorFrames = 1; // Start the new color frame count
+                currentColorIndex = (currentColorIndex + 1) % 3; // Correct modulus value to cycle through 3 colors
+                colorFrames = 0; // Reset color frames to 0
             }
-            if (currentColorIndex % 2 === 0) {
-                fill(selectedColors[Math.floor(currentColorIndex / 2)]);
-            } else {
-                fill(255); // White
-            }
+            fill(selectedColors[currentColorIndex]);
             ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
         } else {
             fill(255); // White fixation point for other conditions
@@ -227,14 +220,10 @@ function draw() {
                 if (colorFrames < 30) {
                     colorFrames++;
                 } else {
-                    currentColorIndex = (currentColorIndex + 1) % 4; // 0, 1, 2, 3 cycle
-                    colorFrames = 1; // Start the new color frame count
+                    currentColorIndex = (currentColorIndex + 1) % 3; // Correct modulus value to cycle through 3 colors
+                    colorFrames = 0; // Reset color frames to 0
                 }
-                if (currentColorIndex % 2 === 0) {
-                    fill(selectedColors[Math.floor(currentColorIndex / 2)]);
-                } else {
-                    fill(255); // White
-                }
+                fill(selectedColors[currentColorIndex]);
                 ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
             }
         } else {
