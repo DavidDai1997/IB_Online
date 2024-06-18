@@ -1,3 +1,4 @@
+// working, console message need to be fixed
 let centerX, centerY, radius;
 let numDots = 120;
 let angleStep;
