@@ -1,4 +1,4 @@
-// no more glitch at the end of wop, but last color in rdr last for 60 frames
+// failed
 let centerX, centerY, radius;
 let numDots = 120;
 let angleStep;
@@ -198,9 +198,12 @@ function draw() {
         document.body.style.cursor = 'none';
         drawClockface();
         drawRedDot();
-        redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         frameCount++;
         totalTrialFrameCount++;
+
+        if (frameCount === 1) {
+            colorFrames = 0;  // Reset to ensure the first color change lasts full 30 frames
+        }
 
         if (colorFrames < 30) {
             colorFrames++;
@@ -353,7 +356,7 @@ function drawPlaySymbol() {
 
     fill(isHovering ? 'green' : 'grey');
     noStroke();
-    triangle(centerX - triangleSize / 2, centerY - triangleSize / 2, centerX - triangleSize / 2, centerY + triangleSize / 2, centerX + triangleSize / 2, centerY);
+    triangle(centerX - triangleSize / 2, centerY - triangleSize / 2, centerX - triangleSize / 2, centerY + triangleSize / 2, centerX + triangleSize / 2);
 
     if (mouseIsPressed && isHovering) {
         showPlaySymbol = false;
@@ -443,3 +446,4 @@ function calculateDotDistance(realDotIndex, selectedDotIndex) {
     }
     return distance;
 }
+
