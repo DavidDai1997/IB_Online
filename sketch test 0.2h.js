@@ -67,7 +67,7 @@ function startExperiment() {
 function draw() {
     background(0);
     fill(255);
-    
+
     if (!soundLoadedFlag) {
         text('Loading sounds...', width / 2, height / 2);
     } else if (experimentEnded) {
@@ -249,7 +249,7 @@ function draw() {
             ellipse(centerX, centerY, 16, 16); // Draw fixation point, same size as red dot
         }
     } else if (trialPhase === 5) {
-        // Clockface remains for 30 frames
+        // Clockface remains for 30 frames, no fixation point
         document.body.style.cursor = 'none'; // Hide cursor
         drawClockface();
         if (frameCount < 30) {
