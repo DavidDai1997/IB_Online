@@ -1,4 +1,3 @@
-// no difference from 0.2l
 let centerX, centerY, radius;
 let numDots = 120;
 let angleStep;
@@ -202,10 +201,9 @@ function draw() {
         totalTrialFrameCount++;
 
         if (frameCount === 1) {
-            colorFrames = 0;  // Reset to ensure the first color change lasts full 30 frames
-        }
-
-        if (colorFrames < 30) {
+            colorCycleIndex = (colorCycleIndex + 1) % 4; // Ensure the color changes at the start of the washout period
+            colorFrames = 1;
+        } else if (colorFrames < 30) {
             colorFrames++;
         } else {
             colorCycleIndex = (colorCycleIndex + 1) % 4;
@@ -446,4 +444,5 @@ function calculateDotDistance(realDotIndex, selectedDotIndex) {
     }
     return distance;
 }
+
 
