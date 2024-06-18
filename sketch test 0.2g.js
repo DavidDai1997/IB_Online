@@ -32,8 +32,7 @@ let selectedColors = []; // Colors selected for each trial
 let colorCycle = [1, 0, 2, 0]; // Simplified color index cycle with white separating the colors
 let colorCycleIndex = 0; // Track the current index in the color cycle
 let colorFrames = 0; // Track the number of frames for the current color
-let totalFrameCount = 0; // To keep track of the total frame count across phases
-let totalTrialFrameCount = 0;
+let totalTrialFrameCount = 0; // To keep track of the total frame count for each trial
 
 
 function preload() {
@@ -67,8 +66,7 @@ function startExperiment() {
 function draw() {
     background(0);
     fill(255);
-    totalFrameCount++; // Increment the total frame count for the whole experiment
-
+    
     if (!soundLoadedFlag) {
         text('Loading sounds...', width / 2, height / 2);
     } else if (experimentEnded) {
@@ -154,7 +152,7 @@ function draw() {
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         frameCount++;
-        totalTrialFrameCount++; // Increment total frame count for phases 2 to 4
+        totalTrialFrameCount++; // Increment total frame count for the trial
 
         if (colorFrames < 30) {
             colorFrames++;
@@ -186,7 +184,7 @@ function draw() {
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         frameCount++;
-        totalTrialFrameCount++; // Increment total frame count for phases 2 to 4
+        totalTrialFrameCount++; // Increment total frame count for the trial
         console.log(`Phase: 3, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${totalTrialFrameCount}`);
 
         if (frameCount === 15) {
@@ -215,7 +213,7 @@ function draw() {
         drawClockface();
         drawRedDot();
         frameCount++;
-        totalTrialFrameCount++; // Increment total frame count for phases 2 to 4
+        totalTrialFrameCount++; // Increment total frame count for the trial
 
         // Ensure color index switch in the first frame of phase 4
         if (frameCount === 1) {
@@ -307,6 +305,7 @@ function draw() {
 
                 trialPhase++;
                 showPlaySymbol = true; // Show play symbol after response
+                totalTrialFrameCount = 0; // Reset total frame count for the next trial
             }
         }
     } else if (trialPhase === 8) {
