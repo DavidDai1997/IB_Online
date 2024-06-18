@@ -29,7 +29,7 @@ let fixationColors = ['red', 'blue', 'green'];
 let selectedColors = []; // Colors selected for each trial
 let colorCycle = [1, 0, 2, 0]; // Simplified color index cycle with white separating the colors
 let colorCycleIndex = 0; // Track the current index in the color cycle
-let colorFrames = 0; // Track the number of frames for the current color
+let colorFrames = 1; // Track the number of frames for the current color
 
 function preload() {
     console.log('Preloading sounds...');
@@ -113,7 +113,7 @@ function draw() {
             if (condition === "Passive_Attention") {
                 selectedColors = randomTwoColors(fixationColors);
                 colorCycleIndex = 0;
-                colorFrames = 0; // Reset color frames
+                colorFrames = 1; // Reset color frames
             }
 
             trialPhase = 0; // Move to the next phase
@@ -148,14 +148,6 @@ function draw() {
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         frameCount++;
-        colorFrames++;
-
-        if (frameCount % 30 === 0) {
-            colorCycleIndex = (colorCycleIndex + 1) % colorCycle.length; // Cycle through 1 -> 0 -> 2 -> 0
-            colorFrames = 0; // Reset color frames to 0
-        }
-
-        console.log(`Phase: 2, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${frameCount}`);
 
         if (frameCount === computerActionFrame) {
             keypressSoundFile.play(); // Play the keypress sound
@@ -163,12 +155,23 @@ function draw() {
             timeBeforeAction = frameCount;
             trialPhase++;
             frameCount = 0; // Reset the frame count for the next phase
-            colorFrames = 15; // Carry over the remaining frames for the last color
         }
 
-        applyColor(colorCycle[colorCycleIndex]);
-        ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
-
+        if (condition === "Passive_Attention") {
+            // Change the fixation color every 30 frames
+            if (colorFrames < 30) {
+                colorFrames++;
+            } else {
+                colorCycleIndex = (colorCycleIndex + 1) % 4; // Cycle through 1 -> 0 -> 2 -> 0
+                colorFrames = 1; // Reset color frames to 1
+            }
+            applyColor(colorCycle[colorCycleIndex]);
+            console.log(`Phase: ${trialPhase}, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${colorFrames}`); // Log after applying color
+            ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
+        } else {
+            fill(255); // White fixation point for other conditions
+            ellipse(centerX, centerY, 16, 16); // Draw fixation point, same size as red dot
+        }
     } else if (trialPhase === 3) {
         // Continue rotating for 15 frames after keypress in Agency condition
         document.body.style.cursor = 'none'; // Hide cursor
@@ -176,9 +179,6 @@ function draw() {
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         frameCount++;
-        colorFrames++;
-
-        console.log(`Phase: 3, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${frameCount}`);
 
         if (frameCount === 15) {
             soundFile.play(); // Play the pool sound
@@ -187,25 +187,27 @@ function draw() {
             trialPhase++;
         }
 
-        if (colorFrames < 30) {
-            colorFrames++;
+        if (condition === "Passive_Attention") {
+            // Continue the color change loop
+            if (colorFrames < 30) {
+                colorFrames++;
+            } else {
+                colorCycleIndex = (colorCycleIndex + 1) % 4; // Cycle through 1 -> 0 -> 2 -> 0
+                colorFrames = 1; // Reset color frames to 1
+            }
+            applyColor(colorCycle[colorCycleIndex]);
+            console.log(`Phase: ${trialPhase}, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${colorFrames}`); // Log after applying color
+            ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
         } else {
-            colorCycleIndex = (colorCycleIndex + 1) % colorCycle.length; // Cycle through 1 -> 0 -> 2 -> 0
-            colorFrames = 0; // Reset color frames to 0
+            fill(255); // White fixation point for other conditions
+            ellipse(centerX, centerY, 16, 16); // Draw fixation point, same size as red dot
         }
-
-        applyColor(colorCycle[colorCycleIndex]);
-        ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
-
     } else if (trialPhase === 4) {
         // Red dot keeps rotating for washOutDuration frames after pool sound
         document.body.style.cursor = 'none'; // Hide cursor
         drawClockface();
         drawRedDot();
         frameCount++;
-        colorFrames++;
-
-        console.log(`Phase: 4, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${frameCount}`);
 
         if (frameCount < washOutDuration) {
             redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
@@ -214,16 +216,21 @@ function draw() {
             trialPhase++;
         }
 
-        if (colorFrames < 30) {
-            colorFrames++;
+        if (condition === "Passive_Attention") {
+            // Continue the color change loop
+            if (colorFrames < 30) {
+                colorFrames++;
+            } else {
+                colorCycleIndex = (colorCycleIndex + 1) % 4; // Cycle through 1 -> 0 -> 2 -> 0
+                colorFrames = 1; // Reset color frames to 1
+            }
+            applyColor(colorCycle[colorCycleIndex]);
+            console.log(`Phase: ${trialPhase}, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${colorFrames}`); // Log after applying color
+            ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
         } else {
-            colorCycleIndex = (colorCycleIndex + 1) % colorCycle.length; // Cycle through 1 -> 0 -> 2 -> 0
-            colorFrames = 0; // Reset color frames to 0
+            fill(255); // White fixation point for other conditions
+            ellipse(centerX, centerY, 16, 16); // Draw fixation point, same size as red dot
         }
-
-        applyColor(colorCycle[colorCycleIndex]);
-        ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
-
     } else if (trialPhase === 5) {
         // Clockface remains for 30 frames
         document.body.style.cursor = 'none'; // Hide cursor
@@ -374,7 +381,7 @@ function drawPlaySymbol() {
             if (condition === "Passive_Attention") {
                 selectedColors = randomTwoColors(fixationColors);
                 colorCycleIndex = 0;
-                colorFrames = 0; // Reset color frames
+                colorFrames = 1; // Reset color frames
             }
 
             trialPhase = 0; // Start the next trial phase
