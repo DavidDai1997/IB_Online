@@ -4,7 +4,7 @@ let angleStep;
 let grayDots = [];
 let trialPhase = -1; // Start with the welcome phase
 let frameCount = 0;
-let totalFrameCount = 0; // Total frame count
+let trialFrameCount = 0; // Frame count for the current trial
 let keyPressOccurred = false;
 let rotationContinuedFrames = 60;
 let redDotPositionIndex = 0;
@@ -113,7 +113,7 @@ function draw() {
             if (condition === "Passive_Attention") {
                 selectedColors = randomTwoColors(fixationColors);
                 currentColorIndex = 0;
-                colorFrames = 0; // Reset color frames
+                colorFrames = 1; // Reset color frames and start from 1
             }
 
             trialPhase = 0; // Move to the next phase
@@ -127,8 +127,6 @@ function draw() {
         document.body.style.cursor = 'none'; // Hide cursor
         if (frameCount < 30) {
             frameCount++;
-            totalFrameCount++;
-            console.log(`Phase: 0, Total Frame Count: ${totalFrameCount}`);
         } else {
             frameCount = 0;
             trialPhase++;
@@ -139,8 +137,6 @@ function draw() {
         drawClockface();
         if (frameCount < 30) {
             frameCount++;
-            totalFrameCount++;
-            console.log(`Phase: 1, Total Frame Count: ${totalFrameCount}`);
         } else {
             frameCount = 0;
             trialPhase++;
@@ -151,14 +147,13 @@ function draw() {
         drawClockface();
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
-        frameCount++;
-        totalFrameCount++;
-        console.log(`Phase: 2, Color Index: ${currentColorIndex}, Color Frames: ${colorFrames}, Total Frame Count: ${totalFrameCount}`);
+        trialFrameCount++;
+        console.log(`Phase: 2, Color Index: ${currentColorIndex}, Color Frames: ${colorFrames}, Trial Frame Count: ${trialFrameCount}`);
 
-        if (frameCount === computerActionFrame) {
+        if (trialFrameCount === computerActionFrame) {
             keypressSoundFile.play(); // Play the keypress sound
-            playSoundFrame = frameCount + 15; // Set the frame to play the pool sound
-            timeBeforeAction = frameCount;
+            playSoundFrame = trialFrameCount + 15; // Set the frame to play the pool sound
+            timeBeforeAction = trialFrameCount;
             trialPhase++;
             frameCount = 0; // Reset the frame count for the next phase
         }
@@ -169,7 +164,7 @@ function draw() {
                 colorFrames++;
             } else {
                 currentColorIndex = (currentColorIndex + 1) % 4; // Cycle through selected colors and white
-                colorFrames = 1; // Start color frames from 1
+                colorFrames = 1; // Reset color frames to 1
             }
             if (currentColorIndex % 2 === 0) {
                 fill(selectedColors[Math.floor(currentColorIndex / 2)]);
@@ -187,9 +182,8 @@ function draw() {
         drawClockface();
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
-        frameCount++;
-        totalFrameCount++;
-        console.log(`Phase: 3, Total Frame Count: ${totalFrameCount}`);
+        trialFrameCount++;
+        console.log(`Phase: 3, Trial Frame Count: ${trialFrameCount}`);
 
         if (frameCount === 15) {
             soundFile.play(); // Play the pool sound
@@ -204,7 +198,7 @@ function draw() {
                 colorFrames++;
             } else {
                 currentColorIndex = (currentColorIndex + 1) % 4; // Cycle through selected colors and white
-                colorFrames = 1; // Start color frames from 1
+                colorFrames = 1; // Reset color frames to 1
             }
             if (currentColorIndex % 2 === 0) {
                 fill(selectedColors[Math.floor(currentColorIndex / 2)]);
@@ -221,9 +215,8 @@ function draw() {
         document.body.style.cursor = 'none'; // Hide cursor
         drawClockface();
         drawRedDot();
-        frameCount++;
-        totalFrameCount++;
-        console.log(`Phase: 4, Color Index: ${currentColorIndex}, Color Frames: ${colorFrames}, Total Frame Count: ${totalFrameCount}`);
+        trialFrameCount++;
+        console.log(`Phase: 4, Color Index: ${currentColorIndex}, Color Frames: ${colorFrames}, Trial Frame Count: ${trialFrameCount}`);
 
         if (frameCount < washOutDuration) {
             redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
@@ -238,7 +231,7 @@ function draw() {
                 colorFrames++;
             } else {
                 currentColorIndex = (currentColorIndex + 1) % 4; // Cycle through selected colors and white
-                colorFrames = 1; // Start color frames from 1
+                colorFrames = 1; // Reset color frames to 1
             }
             if (currentColorIndex % 2 === 0) {
                 fill(selectedColors[Math.floor(currentColorIndex / 2)]);
@@ -256,8 +249,6 @@ function draw() {
         drawClockface();
         if (frameCount < 30) {
             frameCount++;
-            totalFrameCount++;
-            console.log(`Phase: 5, Total Frame Count: ${totalFrameCount}`);
         } else {
             frameCount = 0;
             trialPhase++;
@@ -267,8 +258,6 @@ function draw() {
         document.body.style.cursor = 'none'; // Hide cursor
         if (frameCount < 30) {
             frameCount++;
-            totalFrameCount++;
-            console.log(`Phase: 6, Total Frame Count: ${totalFrameCount}`);
         } else {
             frameCount = 0;
             trialPhase++;
@@ -394,6 +383,7 @@ function drawPlaySymbol() {
 
             trialPhase = 0; // Start the next trial phase
             trialNumber++;
+            trialFrameCount = 0; // Reset trial frame count
             if (condition === "Passive_Attention") {
                 computerActionFrame = int(random([75, 105, 135, 165])); // Set the computer action frame for Passive_Attention condition
                 washOutDuration = int(random([30, 60, 90, 120])); // Ensure washout duration makes the total duration divisible by 30
