@@ -116,6 +116,8 @@ function draw() {
             trialPhase = 0; // Move to the next phase
             if (condition === "Passive_Attention") {
                 computerActionFrame = int(random([75, 105, 135, 165])); // Set the computer action frame for Passive_Attention condition
+                // Ensure washout duration makes the total duration divisible by 30
+                washOutDuration = int(random([30, 60, 90, 120]));
             }
         }
     } else if (trialPhase === 0) {
@@ -178,7 +180,6 @@ function draw() {
         if (frameCount === 15) {
             soundFile.play(); // Play the pool sound
             realDotIndex = redDotPositionIndex;
-            washOutDuration = int(random([30, 60, 90, 120])); // Set washOutDuration
             frameCount = 0;
             trialPhase++;
         } else {
@@ -322,6 +323,7 @@ function drawPlaySymbol() {
             trialNumber++;
             if (condition === "Passive_Attention") {
                 computerActionFrame = int(random([75, 105, 135, 165])); // Set the computer action frame for Passive_Attention condition
+                washOutDuration = int(random([30, 60, 90, 120])); // Ensure washout duration makes the total duration divisible by 30
             }
             if ((trialNumber - 1) % totalTrialsPerCondition === 0 && currentConditionIndex < conditionsOrder.length - 1) {
                 currentConditionIndex++;
