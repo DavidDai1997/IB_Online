@@ -1,10 +1,10 @@
+// working, console message need to be fixed
 let centerX, centerY, radius;
 let numDots = 120;
 let angleStep;
 let grayDots = [];
 let trialPhase = -1; // Start with the welcome phase
 let frameCount = 0;
-let trialFrameCount = 0; // Frame count for the current trial
 let keyPressOccurred = false;
 let rotationContinuedFrames = 60;
 let redDotPositionIndex = 0;
@@ -25,11 +25,15 @@ let showPlaySymbol = false;
 let experimentEnded = false; // Flag to indicate the experiment has ended
 let washOutDuration; // New washOutDuration variable
 
+
 // New variables for Passive_Attention condition
 let fixationColors = ['red', 'blue', 'green'];
 let selectedColors = []; // Colors selected for each trial
-let currentColorIndex = 0; // Track the current color index for the color-changing loop
+let colorCycle = [1, 0, 2, 0]; // Simplified color index cycle with white separating the colors
+let colorCycleIndex = 0; // Track the current index in the color cycle
 let colorFrames = 0; // Track the number of frames for the current color
+let totalFrameCount = 0; // To keep track of the total frame count across phases
+
 
 function preload() {
     console.log('Preloading sounds...');
@@ -62,6 +66,7 @@ function startExperiment() {
 function draw() {
     background(0);
     fill(255);
+    totalFrameCount++; // Increment the total frame count for the whole experiment
 
     if (!soundLoadedFlag) {
         text('Loading sounds...', width / 2, height / 2);
@@ -112,8 +117,8 @@ function draw() {
             // Select two random colors for the Passive_Attention condition
             if (condition === "Passive_Attention") {
                 selectedColors = randomTwoColors(fixationColors);
-                currentColorIndex = 0;
-                colorFrames = 1; // Reset color frames and start from 1
+                colorCycleIndex = 0;
+                colorFrames = 0; // Reset color frames
             }
 
             trialPhase = 0; // Move to the next phase
@@ -147,30 +152,27 @@ function draw() {
         drawClockface();
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
-        trialFrameCount++;
-        console.log(`Phase: 2, Color Index: ${currentColorIndex}, Frame Count: ${trialFrameCount}`);
+        frameCount++;
+        totalTrialFrameCount++; // Increment total frame count for phases 2 to 4
 
-        if (trialFrameCount === computerActionFrame) {
+        if (colorFrames < 30) {
+            colorFrames++;
+        } else {
+            colorCycleIndex = (colorCycleIndex + 1) % 4; // Cycle through 1 -> 0 -> 2 -> 0
+            colorFrames = 1; // Reset color frames to 1
+        }
+        console.log(`Phase: 2, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${totalTrialFrameCount}`);
+
+        if (frameCount === computerActionFrame) {
             keypressSoundFile.play(); // Play the keypress sound
-            playSoundFrame = trialFrameCount + 15; // Set the frame to play the pool sound
-            timeBeforeAction = trialFrameCount;
+            playSoundFrame = frameCount + 15; // Set the frame to play the pool sound
+            timeBeforeAction = frameCount;
             trialPhase++;
             frameCount = 0; // Reset the frame count for the next phase
         }
 
         if (condition === "Passive_Attention") {
-            // Change the fixation color every 30 frames
-            if (colorFrames < 30) {
-                colorFrames++;
-            } else {
-                currentColorIndex = (currentColorIndex + 1) % 4; // Cycle through selected colors and white
-                colorFrames = 1; // Reset color frames to 1
-            }
-            if (currentColorIndex % 2 === 0) {
-                fill(selectedColors[Math.floor(currentColorIndex / 2)]);
-            } else {
-                fill(255); // White
-            }
+            applyColor(colorCycle[colorCycleIndex]);
             ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
         } else {
             fill(255); // White fixation point for other conditions
@@ -182,8 +184,9 @@ function draw() {
         drawClockface();
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
-        trialFrameCount++;
-        console.log(`Phase: 3, Frame Count: ${trialFrameCount}`);
+        frameCount++;
+        totalTrialFrameCount++; // Increment total frame count for phases 2 to 4
+        console.log(`Phase: 3, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${totalTrialFrameCount}`);
 
         if (frameCount === 15) {
             soundFile.play(); // Play the pool sound
@@ -193,18 +196,13 @@ function draw() {
         }
 
         if (condition === "Passive_Attention") {
-            // Continue the color change loop
             if (colorFrames < 30) {
                 colorFrames++;
             } else {
-                currentColorIndex = (currentColorIndex + 1) % 4; // Cycle through selected colors and white
+                colorCycleIndex = (colorCycleIndex + 1) % 4; // Cycle through 1 -> 0 -> 2 -> 0
                 colorFrames = 1; // Reset color frames to 1
             }
-            if (currentColorIndex % 2 === 0) {
-                fill(selectedColors[Math.floor(currentColorIndex / 2)]);
-            } else {
-                fill(255); // White
-            }
+            applyColor(colorCycle[colorCycleIndex]);
             ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
         } else {
             fill(255); // White fixation point for other conditions
@@ -215,29 +213,36 @@ function draw() {
         document.body.style.cursor = 'none'; // Hide cursor
         drawClockface();
         drawRedDot();
-        trialFrameCount++;
-        console.log(`Phase: 4, Color Index: ${currentColorIndex}, Frame Count: ${trialFrameCount}`);
+        frameCount++;
+        totalTrialFrameCount++; // Increment total frame count for phases 2 to 4
 
-        if (trialFrameCount - timeBeforeAction >= washOutDuration) {
-            frameCount = 0;
-            trialPhase++;
-        } else {
-            redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
-        }
-
-        if (condition === "Passive_Attention") {
-            // Continue the color change loop
+        // Ensure color index switch in the first frame of phase 4
+        if (frameCount === 1) {
             if (colorFrames < 30) {
                 colorFrames++;
             } else {
-                currentColorIndex = (currentColorIndex + 1) % 4; // Cycle through selected colors and white
+                colorCycleIndex = (colorCycleIndex + 1) % 4; // Cycle through 1 -> 0 -> 2 -> 0
                 colorFrames = 1; // Reset color frames to 1
             }
-            if (currentColorIndex % 2 === 0) {
-                fill(selectedColors[Math.floor(currentColorIndex / 2)]);
+        }
+        
+        console.log(`Phase: 4, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${totalTrialFrameCount}`);
+
+        if (frameCount < washOutDuration) {
+            redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
+        } else {
+            frameCount = 0;
+            trialPhase++;
+        }
+
+        if (condition === "Passive_Attention") {
+            if (colorFrames < 30) {
+                colorFrames++;
             } else {
-                fill(255); // White
+                colorCycleIndex = (colorCycleIndex + 1) % 4; // Cycle through 1 -> 0 -> 2 -> 0
+                colorFrames = 1; // Reset color frames to 1
             }
+            applyColor(colorCycle[colorCycleIndex]);
             ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
         } else {
             fill(255); // White fixation point for other conditions
@@ -315,6 +320,21 @@ function draw() {
     }
 }
 
+function applyColor(index) {
+    switch (index) {
+        case 1:
+            fill(selectedColors[0]);
+            break;
+        case 2:
+            fill(selectedColors[1]);
+            break;
+        case 0:
+        default:
+            fill(255); // White
+            break;
+    }
+}
+
 function drawClockface() {
     // Draw the gray dots
     fill(128); // Set fill color to gray
@@ -377,13 +397,12 @@ function drawPlaySymbol() {
             // Select new colors for each trial
             if (condition === "Passive_Attention") {
                 selectedColors = randomTwoColors(fixationColors);
-                currentColorIndex = 0;
-                colorFrames = 1; // Start color frames from 1
+                colorCycleIndex = 0;
+                colorFrames = 0; // Reset color frames
             }
 
             trialPhase = 0; // Start the next trial phase
             trialNumber++;
-            trialFrameCount = 0; // Reset trial frame count
             if (condition === "Passive_Attention") {
                 computerActionFrame = int(random([75, 105, 135, 165])); // Set the computer action frame for Passive_Attention condition
                 washOutDuration = int(random([30, 60, 90, 120])); // Ensure washout duration makes the total duration divisible by 30
