@@ -198,12 +198,9 @@ function draw() {
         document.body.style.cursor = 'none';
         drawClockface();
         drawRedDot();
+        redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         frameCount++;
         totalTrialFrameCount++;
-
-        if (frameCount === 1) {
-            colorFrames = 0;  // Reset to ensure the first color change lasts full 30 frames
-        }
 
         if (colorFrames < 30) {
             colorFrames++;
