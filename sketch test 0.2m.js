@@ -356,12 +356,7 @@ function drawPlaySymbol() {
 
     fill(isHovering ? 'green' : 'grey');
     noStroke();
-    // The triangle function requires six arguments: x1, y1, x2, y2, x3, y3
-    triangle(
-        centerX - triangleSize / 2, centerY - triangleSize / 2, 
-        centerX - triangleSize / 2, centerY + triangleSize / 2, 
-        centerX + triangleSize / 2, centerY
-    );
+    triangle(centerX - triangleSize / 2, centerY - triangleSize / 2, centerX - triangleSize / 2, centerY + triangleSize / 2, centerX + triangleSize / 2, centerY);
 
     if (mouseIsPressed && isHovering) {
         showPlaySymbol = false;
