@@ -1,5 +1,3 @@
-//better version!
-
 let centerX, centerY, radius;
 let numDots = 120;
 let angleStep;
@@ -224,19 +222,21 @@ function draw() {
         }
 
         if (condition === "Passive_Attention") {
-            // Continue the color change loop
-            if (colorFrames < 30) {
+            // Continue the color change loop, but prevent change in the last frame
+            if (colorFrames < 30 && frameCount < washOutDuration - 1) {
                 colorFrames++;
-            } else {
+            } else if (frameCount < washOutDuration - 1) {
                 currentColorIndex = (currentColorIndex + 1) % 4; // 0, 1, 2, 3 cycle
                 colorFrames = 1; // Start the new color frame count
             }
-            if (currentColorIndex % 2 === 0) {
-                fill(selectedColors[Math.floor(currentColorIndex / 2)]);
-            } else {
-                fill(255); // White
+            if (frameCount < washOutDuration - 1) {
+                if (currentColorIndex % 2 === 0) {
+                    fill(selectedColors[Math.floor(currentColorIndex / 2)]);
+                } else {
+                    fill(255); // White
+                }
+                ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
             }
-            ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
         } else {
             fill(255); // White fixation point for other conditions
             ellipse(centerX, centerY, 16, 16); // Draw fixation point, same size as red dot
