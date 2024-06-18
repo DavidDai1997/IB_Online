@@ -113,7 +113,7 @@ function draw() {
             if (condition === "Passive_Attention") {
                 selectedColors = randomTwoColors(fixationColors);
                 colorCycleIndex = 0;
-                colorFrames = 1; // Reset color frames
+                colorFrames = 1; // Start color frames at 1
             }
 
             trialPhase = 0; // Move to the next phase
@@ -148,6 +148,7 @@ function draw() {
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         frameCount++;
+        console.log(`Phase: 2, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${frameCount}`);
 
         if (frameCount === computerActionFrame) {
             keypressSoundFile.play(); // Play the keypress sound
@@ -166,7 +167,6 @@ function draw() {
                 colorFrames = 1; // Reset color frames to 1
             }
             applyColor(colorCycle[colorCycleIndex]);
-            console.log(`Phase: ${trialPhase}, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${colorFrames}`); // Log after applying color
             ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
         } else {
             fill(255); // White fixation point for other conditions
@@ -179,6 +179,7 @@ function draw() {
         drawRedDot();
         redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
         frameCount++;
+        console.log(`Phase: 3, Frame Count: ${frameCount}`);
 
         if (frameCount === 15) {
             soundFile.play(); // Play the pool sound
@@ -196,7 +197,6 @@ function draw() {
                 colorFrames = 1; // Reset color frames to 1
             }
             applyColor(colorCycle[colorCycleIndex]);
-            console.log(`Phase: ${trialPhase}, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${colorFrames}`); // Log after applying color
             ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
         } else {
             fill(255); // White fixation point for other conditions
@@ -208,6 +208,7 @@ function draw() {
         drawClockface();
         drawRedDot();
         frameCount++;
+        console.log(`Phase: 4, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${frameCount}`);
 
         if (frameCount < washOutDuration) {
             redDotPositionIndex = (redDotPositionIndex + 1) % numDots;
@@ -225,7 +226,6 @@ function draw() {
                 colorFrames = 1; // Reset color frames to 1
             }
             applyColor(colorCycle[colorCycleIndex]);
-            console.log(`Phase: ${trialPhase}, Color Index: ${colorCycle[colorCycleIndex]}, Frame Count: ${colorFrames}`); // Log after applying color
             ellipse(centerX, centerY, 16, 16); // Draw fixation point with changing color, same size as red dot
         } else {
             fill(255); // White fixation point for other conditions
