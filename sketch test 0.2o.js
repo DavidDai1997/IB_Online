@@ -25,15 +25,13 @@ let showPlaySymbol = false;
 let experimentEnded = false; // Flag to indicate the experiment has ended
 let washOutDuration; // New washOutDuration variable
 
-
 // New variables for Passive_Attention condition
 let fixationColors = ['red', 'blue', 'green'];
 let selectedColors = []; // Colors selected for each trial
-let colorCycle = [1, 0, 2, 0]; // Simplified color index cycle with white separating the colors
+let colorCycle = []; // Simplified color index cycle with white separating the colors
 let colorCycleIndex = 0; // Track the current index in the color cycle
 let colorFrames = 0; // Track the number of frames for the current color
 let totalTrialFrameCount = 0; // To keep track of the total frame count for each trial
-
 
 function preload() {
     console.log('Preloading sounds...');
@@ -58,6 +56,12 @@ function startExperiment() {
         document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
         document.getElementById('messageContainer').style.display = 'block';
         trialPhase = -2; // Indicate that we are showing the initial condition message
+
+        // Generate the random color cycle
+        selectedColors = randomTwoColors(fixationColors);
+        colorCycle = generateRandomColorCycle(selectedColors, 4); // 4 cycles of color and white
+        colorCycleIndex = 0;
+        colorFrames = 0;
     } else {
         alert("Please enter both Subject Number and Age.");
     }
@@ -108,7 +112,7 @@ function draw() {
             }
 
             if (condition === "Passive_Attention") {
-                selectedColors = randomTwoColors(fixationColors);
+                colorCycle = generateRandomColorCycle(selectedColors, 4); // 4 cycles of color and white
                 colorCycleIndex = 0;
                 colorFrames = 0;
             }
@@ -147,7 +151,7 @@ function draw() {
         if (colorFrames < 30) {
             colorFrames++;
         } else {
-            colorCycleIndex = (colorCycleIndex + 1) % 4;
+            colorCycleIndex = (colorCycleIndex + 1) % colorCycle.length;
             colorFrames = 1;
         }
 
@@ -185,7 +189,7 @@ function draw() {
             if (colorFrames < 30) {
                 colorFrames++;
             } else {
-                colorCycleIndex = (colorCycleIndex + 1) % 4;
+                colorCycleIndex = (colorCycleIndex + 1) % colorCycle.length;
                 colorFrames = 1;
             }
             applyColor(colorCycle[colorCycleIndex]);
@@ -202,12 +206,12 @@ function draw() {
         totalTrialFrameCount++;
 
         if (frameCount === 1) {
-            colorCycleIndex = (colorCycleIndex + 1) % 4; // Ensure the color changes at the start of the washout period
+            colorCycleIndex = (colorCycleIndex + 1) % colorCycle.length; // Ensure the color changes at the start of the washout period
             colorFrames = 1;
         } else if (colorFrames < 30) {
             colorFrames++;
         } else {
-            colorCycleIndex = (colorCycleIndex + 1) % 4;
+            colorCycleIndex = (colorCycleIndex + 1) % colorCycle.length;
             colorFrames = 1;
         }
 
@@ -363,6 +367,7 @@ function drawPlaySymbol() {
         if (trialNumber < totalTrialsPerCondition * conditionsOrder.length) {
             if (condition === "Passive_Attention") {
                 selectedColors = randomTwoColors(fixationColors);
+                colorCycle = generateRandomColorCycle(selectedColors, 4); // 4 cycles of color and white
                 colorCycleIndex = 0;
                 colorFrames = 0;
             }
@@ -436,6 +441,15 @@ function shuffleArray(array) {
     return array;
 }
 
+function generateRandomColorCycle(colors, length) {
+    let cycle = [];
+    for (let i = 0; i < length; i++) {
+        cycle.push(colors[Math.floor(Math.random() * colors.length)]);
+        cycle.push(0); // White color represented by 0
+    }
+    return cycle;
+}
+
 function calculateDotDistance(realDotIndex, selectedDotIndex) {
     let distance = selectedDotIndex - realDotIndex;
     if (distance > 60) {
@@ -445,5 +459,3 @@ function calculateDotDistance(realDotIndex, selectedDotIndex) {
     }
     return distance;
 }
-
-
