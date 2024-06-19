@@ -33,6 +33,48 @@ let colorCycleIndex = 0; // Track the current index in the color cycle
 let colorFrames = 0; // Track the number of frames for the current color
 let totalTrialFrameCount = 0; // To keep track of the total frame count for each trial
 
+// Define the predefined sequences
+const predefinedSequences = [
+    ['C1', 'W', 'C2', 'W'], // Sequence for 120 frames
+    ['C1', 'W', 'C1', 'W', 'C2'], // Sequence for 150 frames
+    ['C1', 'W', 'C1', 'W', 'C2', 'W'], // Sequence for 180 frames
+    ['C1', 'W', 'C1', 'W', 'C1', 'W', 'C2'], // Sequence for 210 frames
+    ['C1', 'W', 'C1', 'W', 'C2', 'W', 'C2', 'W'], // Sequence for 240 frames
+    ['C1', 'W', 'C1', 'W', 'C2', 'W', 'C2', 'W', 'C2'], // Sequence for 270 frames
+    ['C1', 'W', 'C1', 'W', 'C2', 'W', 'C2', 'W', 'C2', 'W'] // Sequence for 300 frames
+];
+
+// New function to get the predefined sequence based on frame count
+function getPredefinedSequence(frameCount) {
+    if (frameCount >= 120 && frameCount < 150) {
+        return predefinedSequences[0];
+    } else if (frameCount >= 150 && frameCount < 180) {
+        return predefinedSequences[1];
+    } else if (frameCount >= 180 && frameCount < 210) {
+        return predefinedSequences[2];
+    } else if (frameCount >= 210 && frameCount < 240) {
+        return predefinedSequences[3];
+    } else if (frameCount >= 240 && frameCount < 270) {
+        return predefinedSequences[4];
+    } else if (frameCount >= 270 && frameCount < 300) {
+        return predefinedSequences[5];
+    } else if (frameCount >= 300) {
+        return predefinedSequences[6];
+    }
+    return [];
+}
+
+// New function to shuffle C1 and C2 positions in the sequence
+function shuffleColorsInSequence(sequence) {
+    let indices = sequence.map((color, index) => (color === 'C1' || color === 'C2') ? index : -1).filter(index => index !== -1);
+    let shuffledIndices = shuffleArray(indices);
+    let shuffledSequence = [...sequence];
+    for (let i = 0; i < indices.length; i++) {
+        shuffledSequence[indices[i]] = sequence[shuffledIndices[i]];
+    }
+    return shuffledSequence;
+}
+
 function preload() {
     console.log('Preloading sounds...');
     soundFile = loadSound('Pool2_44100.wav', soundLoaded, loadError);
@@ -59,9 +101,6 @@ function startExperiment() {
 
         // Generate the random color cycle
         selectedColors = randomTwoColors(fixationColors);
-        colorCycle = generateRandomColorCycle(selectedColors, 4); // 4 cycles of color and white
-        colorCycleIndex = 0;
-        colorFrames = 0;
     } else {
         alert("Please enter both Subject Number and Age.");
     }
@@ -112,7 +151,10 @@ function draw() {
             }
 
             if (condition === "Passive_Attention") {
-                colorCycle = generateRandomColorCycle(selectedColors, 4); // 4 cycles of color and white
+                let totalFrames = calculateTotalFrames();
+                let sequence = getPredefinedSequence(totalFrames);
+                sequence = shuffleColorsInSequence(sequence);
+                colorCycle = sequence.map(color => (color === 'C1') ? selectedColors[0] : (color === 'C2') ? selectedColors[1] : 'white');
                 colorCycleIndex = 0;
                 colorFrames = 0;
             }
@@ -370,7 +412,10 @@ function drawPlaySymbol() {
         if (trialNumber < totalTrialsPerCondition * conditionsOrder.length) {
             if (condition === "Passive_Attention") {
                 selectedColors = randomTwoColors(fixationColors);
-                colorCycle = generateRandomColorCycle(selectedColors, 4); // 4 cycles of color and white
+                let totalFrames = calculateTotalFrames();
+                let sequence = getPredefinedSequence(totalFrames);
+                sequence = shuffleColorsInSequence(sequence);
+                colorCycle = sequence.map(color => (color === 'C1') ? selectedColors[0] : (color === 'C2') ? selectedColors[1] : 'white');
                 colorCycleIndex = 0;
                 colorFrames = 0;
             }
@@ -461,4 +506,171 @@ function calculateDotDistance(realDotIndex, selectedDotIndex) {
         distance += 120;
     }
     return distance;
+}
+
+// Utility function to calculate the total frames for a trial
+function calculateTotalFrames() {
+    let redDotRotationFrames = 75; // Example value, adjust as needed
+    let actionOutcomeInterval = 15; // Example value, adjust as needed
+    return redDotRotationFrames + actionOutcomeInterval + washOutDuration;
+}
+
+// Existing functions for clockface, red dot, play symbol, etc.
+function drawClockface() {
+    fill(128);
+    noStroke();
+    for (let dot of grayDots) {
+        ellipse(dot.x, dot.y, 16, 16);
+    }
+
+    if (trialPhase < 5 || trialPhase === 7) {
+        fill(255);
+        ellipse(centerX, centerY, 16, 16);
+    }
+}
+
+function drawClockfaceWithHover() {
+    noStroke();
+    selectedDotIndex = -1;
+
+    for (let i = 0; i < grayDots.length; i++) {
+        let dot = grayDots[i];
+        let d = dist(mouseX, mouseY, dot.x, dot.y);
+        if (d < 8) {
+            fill(255, 0, 0);
+            selectedDotIndex = i;
+        } else {
+            fill(128);
+        }
+        ellipse(dot.x, dot.y, 16, 16);
+    }
+
+    if (trialPhase === 7) {
+        fill(255);
+        ellipse(centerX, centerY, 16, 16);
+    }
+}
+
+function drawRedDot() {
+    if (redDotPositionIndex < grayDots.length) {
+        fill(255, 0, 0);
+        ellipse(grayDots[redDotPositionIndex].x, grayDots[redDotPositionIndex].y, 16, 16);
+    }
+}
+
+function drawPlaySymbol() {
+    const triangleSize = 30;
+    let isHovering = dist(mouseX, mouseY, centerX, centerY) < triangleSize;
+
+    fill(isHovering ? 'green' : 'grey');
+    noStroke();
+    triangle(centerX - triangleSize / 2, centerY - triangleSize / 2, centerX - triangleSize / 2, centerY + triangleSize / 2, centerX + triangleSize / 2, centerY);
+
+    if (mouseIsPressed && isHovering) {
+        showPlaySymbol = false;
+        document.body.style.cursor = 'none';
+        if (trialNumber < totalTrialsPerCondition * conditionsOrder.length) {
+            if (condition === "Passive_Attention") {
+                selectedColors = randomTwoColors(fixationColors);
+                let totalFrames = calculateTotalFrames();
+                let sequence = getPredefinedSequence(totalFrames);
+                sequence = shuffleColorsInSequence(sequence);
+                colorCycle = sequence.map(color => (color === 'C1') ? selectedColors[0] : (color === 'C2') ? selectedColors[1] : 'white');
+                colorCycleIndex = 0;
+                colorFrames = 0;
+            }
+
+            trialPhase = 0;
+            trialNumber++;
+            if (condition === "Passive_Attention") {
+                computerActionFrame = int(random([75, 105, 135, 165]));
+                washOutDuration = int(random([30, 60, 90, 120]));
+            }
+            if ((trialNumber - 1) % totalTrialsPerCondition === 0 && currentConditionIndex < conditionsOrder.length - 1) {
+                currentConditionIndex++;
+                condition = conditionsOrder[currentConditionIndex];
+                document.getElementById('messageContainer').innerText = `This is ${condition} condition, press the space key to start`;
+                document.getElementById('messageContainer').style.display = 'block';
+                trialPhase = -2;
+            }
+        } else {
+            experimentEnded = true;
+        }
+    }
+}
+
+function keyPressed() {
+    if (key === ' ' && experimentStarted) {
+        keyPressOccurred = true;
+    }
+}
+
+function soundLoaded() {
+    console.log('Sound loaded successfully.');
+    soundLoadedFlag = true;
+}
+
+function loadError(err) {
+    console.error('Error loading sound:', err);
+}
+
+function generateUniqueID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+function centerCanvas() {
+    let canvas = select('canvas');
+    canvas.style('display', 'block');
+    canvas.style('margin-left', 'auto');
+    canvas.style('margin-right', 'auto');
+    canvas.style('position', 'absolute');
+    canvas.style('top', '50%');
+    canvas.style('left', '50%');
+    canvas.style('transform', 'translate(-50%, -50%)');
+}
+
+function windowResized() {
+    centerCanvas();
+}
+
+function randomTwoColors(colors) {
+    let shuffled = shuffleArray(colors);
+    return shuffled.slice(0, 2);
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function generateRandomColorCycle(colors, length) {
+    let cycle = [];
+    for (let i = 0; i < length; i++) {
+        cycle.push(colors[Math.floor(Math.random() * colors.length)]); // Randomly pick a color
+        cycle.push('white'); // Use white color as separator
+    }
+    return cycle;
+}
+
+function calculateDotDistance(realDotIndex, selectedDotIndex) {
+    let distance = selectedDotIndex - realDotIndex;
+    if (distance > 60) {
+        distance -= 120;
+    } else if (distance < -60) {
+        distance += 120;
+    }
+    return distance;
+}
+
+// Utility function to calculate the total frames for a trial
+function calculateTotalFrames() {
+    let redDotRotationFrames = 75; // Example value, adjust as needed
+    let actionOutcomeInterval = 15; // Example value, adjust as needed
+    return redDotRotationFrames + actionOutcomeInterval + washOutDuration;
 }
